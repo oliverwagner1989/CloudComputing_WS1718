@@ -1,0 +1,56 @@
+A simple chat server
+Exercise 1 (10 Points)
+
+At http://socket.io/get-started/chat/ you can find a simple chat application developed with node.js. You can use this source code as a basis for your own development.
+
+ Enhance the socket.io chat room server so that
+
+a new user has to register with the website first by providing a user name
+in the chat room, all messages should be displayed in chronological order with a timestamp and the user name of the user who has posted the message.
+a marked message is generated and sent to the chat room each time a new user connects to the chat room or leaves the chat room.
+a user can request a list of all online users using the “\list” command; that list is only sent to the requestor.
+a user can send a message to one dedicated recipient (private message) instead of to all online users in the chat room
+a user can send multi-media files to the participants of a chat room or via a private message, e.g., pictures, movies, sound files.
+Please note, that the source code developed in this exercise will be used in further exercises. Hence, develop with maintainability and extensibility in mind!
+
+ 
+
+Submission:
+
+Prepare an English presentation containing
+the design documentation of your solution. It should at least contain: a component diagram, a sequence diagram (https://sequencediagram.org/) and design mockups
+One lesson-learnt item about node.js server programming. This can be of any domain, e.g., architecture, coding, or behavioral.
+Upload your presentation and implementation source code (as one zip file) to RELAX. All uploaded files have to contain the name and student ID of all members of your group!
+Do not include any node-modules in your source code but rather define dependencies in package.json!
+“npm start” should start the chat server instance.
+Prepare a demonstration of your solution.
+Note that any attempt of cheating, i.e., copying, will result in zero points in the hands-on part of the lecture.
+
+ 
+
+ 
+
+
+ 
+
+Bewertungsschema
+1.     Component Diagram
+
+2.     Mockups
+
+3.     Lesson learnt
+
+4.     User registration, Timestamp and sender name
+
+5.     Status messages
+
+6.     List
+
+7.     Whisper
+
+8.     Multimedia content
+
+9.     Code documentation
+
+10.  Name / Student-ID in all files (package.json)
+
