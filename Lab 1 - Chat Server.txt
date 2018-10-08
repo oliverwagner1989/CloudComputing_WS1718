@@ -1,16 +1,17 @@
-A simple chat server
+﻿A simple chat server
 Exercise 1 (10 Points)
 
 At http://socket.io/get-started/chat/ you can find a simple chat application developed with node.js. You can use this source code as a basis for your own development.
 
  Enhance the socket.io chat room server so that
 
-a new user has to register with the website first by providing a user name
-in the chat room, all messages should be displayed in chronological order with a timestamp and the user name of the user who has posted the message.
-a marked message is generated and sent to the chat room each time a new user connects to the chat room or leaves the chat room.
-a user can request a list of all online users using the “\list” command; that list is only sent to the requestor.
-a user can send a message to one dedicated recipient (private message) instead of to all online users in the chat room
-a user can send multi-media files to the participants of a chat room or via a private message, e.g., pictures, movies, sound files.
+H-a new user has to register with the website first by providing a user name
+O-in the chat room, all messages should be displayed in chronological order with a timestamp and the user name of the user who has posted the message.
+H-a marked message is generated and sent to the chat room each time a new user connects to the chat room or leaves the chat room.
+O-a user can request a list of all online users using the “\list” command; that list is only sent to the requestor.
+H-a user can send a message to one dedicated recipient (private message) instead of to all online users in the chat room
+O-a user can send multi-media files to the participants of a chat room or via a private message, e.g., pictures, movies, sound files.
+
 Please note, that the source code developed in this exercise will be used in further exercises. Hence, develop with maintainability and extensibility in mind!
 
  
