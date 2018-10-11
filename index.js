@@ -3,7 +3,6 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var date = require('dateformat');
-var time = date(new Date(), "HH:MM");
 var userCount = 0;
 
 app.use(express.static('pub'));
@@ -26,7 +25,7 @@ io.on('connection', function (socket) {
         addedUser = true;
         console.log(userCount, username);
         //welcome message
-        socket.emit('chat message', time + ' ' + username + ' Welcome to Socket.IO Chat -');
+        socket.emit('chat message', date(new Date(), "HH:MM") + ' ' + username + ' Welcome to Socket.IO Chat -');
 
         //tell every other users someone joined the chat
         socket.broadcast.emit('user joined', {
@@ -42,8 +41,8 @@ io.on('connection', function (socket) {
 
     //output Messages
     socket.on('chat message', function (msg) {
-        console.log('message: ' + time + ' ' + socket.username + ' ' + msg);
-        socket.broadcast.emit('chat message', time + " " + socket.username + " " + msg);
+        console.log('message: ' + date(new Date(), "HH:MM") + ' ' + socket.username + ' ' + msg);
+        socket.broadcast.emit('chat message', date(new Date(), "HH:MM") + " " + socket.username + " " + msg);
     });
 });
 
