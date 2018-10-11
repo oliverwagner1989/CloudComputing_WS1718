@@ -30,25 +30,25 @@
         }
 
         #send button {
-            width: 9%;
+            border: none;
+            border-radius: 12px;
+            width: 4%;
             background: rgb(77, 244, 132);
-            border: none;
             padding: 10px;
         }
 
-        #upload {
-            background: #000;
-            padding: 3px;
-            position: relative;
-            bottom: 0;
-        }
-
-        #upload button {
-            width: 9%;
-            background: rgb(244, 195, 109);
-            border: none;
+        #send #upload_btn {
+            width: 4%;
+            background: rgb(244, 118, 208);
             padding: 10px;
         }
+
+        /*        #upload_btn {
+                    width: 9%;
+                    background: rgb(244, 134, 115);
+                    border: none;
+                    padding: 10px;
+                }*/
 
         #messages {
             list-style-type: none;
@@ -65,20 +65,19 @@
             background: #bdbdbd;
         }
     </style>
-</head>
 
-<script src="/socket.io/socket.io.js"></script>
-<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-<script src="main.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="main.js"></script>
+    <script src="/siofu/client.js"></script>
+</head>
 
 <body>
 <ul id="messages"></ul>
 <form action="" id="send">
     <input id="m" autocomplete="off"/>
     <button>Send</button>
-</form>
-<form action="" id="upload">
-    <button>Upload</button>
+    <button id="upload_btn">Upload</button>
 </form>
 </body>
 </html>

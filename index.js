@@ -3,9 +3,11 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var date = require('dateformat');
+var SocketIOFileUpload = require("socketio-file-upload");
 var userCount = 0;
 
 app.use(express.static('pub'));
+app.use(SocketIOFileUpload.router);
 
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
@@ -16,7 +18,7 @@ io.on('connection', function (socket) {
     console.log('a user connected');
 
     var addedUser = false;
-    socket.on('add user', function(username) {
+    socket.on('add user', function (username) {
         if (addedUser) return;
 
         //store username in socket session for this client
@@ -32,17 +34,23 @@ io.on('connection', function (socket) {
             username: socket.username,
             userCount: userCount
         });
-    });
 
-    //if User close the Tab or the Browser
-    socket.on('disconnect', function () {
-        console.log('user disconnected');
-    });
+        //if User close the Tab or the Browser
+        socket.on('disconnect', function () {
+            console.log('user disconnected');
+        });
 
-    //output Messages
-    socket.on('chat message', function (msg) {
-        console.log('message: ' + date(new Date(), "HH:MM") + ' ' + socket.username + ' ' + msg);
-        socket.broadcast.emit('chat message', date(new Date(), "HH:MM") + " " + socket.username + " " + msg);
+        //output Messages
+        socket.on('chat message', function (msg) {
+            console.log('message: ' + date(new Date(), "HH:MM") + ' ' + socket.username + ' ' + msg);
+            socket.broadcast.emit('chat message', date(new Date(), "HH:MM") + " " + socket.username + " " + msg);
+        });
+
+        /*    Uploadshit
+            Make an instance of SocketIOFileUpload and listen on this socket:*/
+        var uploader = new SocketIOFileUpload();
+        uploader.dir = __dirname + "/pub/uploads";
+        uploader.listen(socket);
     });
 });
 
