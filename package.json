@@ -5,6 +5,7 @@
   "dependencies": {
     "dateformat": "^3.0.3",
     "express": "^4.16.3",
+    "jquery": "^3.3.1",
     "socket.io": "^2.1.1",
     "socketio-file-upload": "^0.6.3"
   }

@@ -21,6 +21,7 @@ $(function () {
     upload(socket);
 });
 
+
 function upload(socketio) {
     // Initialize instances:
     var socket = socketio.connect();
@@ -43,4 +44,20 @@ function upload(socketio) {
         console.log(event.success);
         console.log(event.file);
     });
+
+    siofu.addEventListener("load", function (event) {
+        uploadComplete("File uploaded: " + event.file.name);
+        console.log(event);
+    });
+}
+
+// Once a file is successfully uploaded, a message pops in
+function uploadComplete(message) {
+    (function (message) {
+        var flsh = $("<div></div>");
+        flsh.addClass("uploadComplete");
+        flsh.text(message);
+        console.log(flsh);
+        flsh.appendTo(document.body);
+    })(message);
 }
