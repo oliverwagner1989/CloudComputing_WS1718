@@ -42,8 +42,8 @@ io.on('connection', function (socket) {
 
         //output Messages
         socket.on('chat message', function (msg) {
-            console.log('message: ' + date(new Date(), "HH:MM") + ' ' + socket.username + ' ' + msg);
-            socket.broadcast.emit('chat message', date(new Date(), "HH:MM") + " " + socket.username + " " + msg);
+            console.log(date(new Date(), "HH:MM") + ' ' + socket.username + ' ' + msg);
+            io.emit('chat message', date(new Date(), "HH:MM") + " " + socket.username + " " + msg);
         });
 
         /*    Uploadshit

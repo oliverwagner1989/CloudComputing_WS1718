@@ -19,8 +19,6 @@ $(function () {
     });
 
     upload(socket);
-
-
 });
 
 function upload(socketio) {
