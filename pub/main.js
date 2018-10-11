@@ -35,7 +35,7 @@ function upload(socketio) {
     var socket = socketio.connect();
     var siofu = new SocketIOFileUpload(socket);
     console.log(siofu);
-    
+
     // Configure the three ways that SocketIOFileUpload can read files:
     document.getElementById("upload_btn").addEventListener("click", siofu.prompt, false);
     //siofu.listenOnInput(document.getElementById("upload_input"));
