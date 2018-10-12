@@ -3,6 +3,7 @@
 <head>
     <title>Socket.IO chat</title>
     <!-- CSS Link <link rel="stylesheet" type="text/css" href="css/style.css" />-->
+    <link rel="stylesheet" type="text/css" href="bootstrap.min.css">
     <style>
         * {
             margin: 0;
@@ -25,20 +26,20 @@
         #send input {
             border: 0;
             padding: 10px;
-            width: 90%;
+            width: 65%;
             margin-right: .5%;
         }
 
         #send button {
             border: none;
             border-radius: 12px;
-            width: 4%;
+            width: auto;
             background: rgb(77, 244, 132);
             padding: 10px;
         }
 
         #send #upload_btn {
-            width: 4%;
+            width: auto;
             background: rgb(244, 118, 208);
             padding: 10px;
         }
@@ -67,7 +68,9 @@
     </style>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <!--<script src="https://code.jquery.com/jquery-1.11.1.js"></script>-->
+    <script src="jquery_min.js"></script>
+    <script src="bootstrap.min.js"></script>
     <script src="main.js"></script>
     <script src="/siofu/client.js"></script>
 </head>
@@ -76,8 +79,8 @@
 <ul id="messages"></ul>
 <form action="" id="send">
     <input id="m" autocomplete="off"/>
-    <button>Send</button>
-    <button id="upload_btn">Upload</button>
+    <button class="btn">Send</button>
+    <button class="btn" id="upload_btn">Upload</button>
 </form>
 </body>
 </html>
