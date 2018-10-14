@@ -1,7 +1,16 @@
 var express = require('express');
 var app = express();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+//var http = require('http').Server(app);
+var fs = require('fs');
+var https = require('https');
+var server = https.createServer({
+    key: fs.readFileSync('server.key'),
+    cert: fs.readFileSync('server.cert'),
+    requestCert: false,
+    rejectUnauthorized: false
+},app, console.log('SSL/TLS listening on 3001, https://localhost:3001'));
+server.listen(3001);
+var io = require('socket.io').listen(server);
 var date = require('dateformat');
 var SocketIOFileUpload = require("socketio-file-upload");
 var userCount = 0;
@@ -55,6 +64,6 @@ io.on('connection', function (socket) {
 });
 
 
-http.listen(3000, function () {
+/*http.listen(3000, function () {
     console.log('listening on *:3000');
-});
+});*/
