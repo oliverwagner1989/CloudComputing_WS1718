@@ -6,6 +6,11 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <style>
+        #login {
+            position:fixed;
+            top: 40%;
+            left: 40%;
+        }
         #send
         {
             width: 100%;
@@ -82,6 +87,15 @@
 </head>
 
 <body>
+<!--LOGIN-->
+<form id="login">
+    <div class="form-group">
+        <input type="text" class="form-control" id="username" placeholder="Enter Username" autocomplete="off" autofocus>
+        <small id="userhelp" class="form-text text-muted">Chose something funky!</small>
+    </div>
+</form>
+
+<!--CHAT-->
 <ul class="list-group list-group-flush" id="messages"></ul>
 
 <form id="send" class="input-group input-group-lg">

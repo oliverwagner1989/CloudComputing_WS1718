@@ -1,12 +1,21 @@
 $(function () {
     var socket = io();
-    var username = prompt("What's your Username?");
-    console.log(username);
-    socket.emit('add user', username);
-    socket.on('user joined', (data) => {
-        console.log(data.username + ' joined');
-        $('#messages').hide().append($('<li class="list-group-item active">').text(data.username + ' joined')).fadeIn(300);
-        $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
+    $("#messages").toggle();
+    $("#send").toggle();
+
+    $("#login").submit(function () {
+        var username = $("#username").val();
+        console.log(username);
+        socket.emit('add user', username);
+        socket.on('user joined', (data) => {
+            console.log(data.username + ' joined');
+            $('#messages').hide().append($('<li class="list-group-item active">').text(data.username + ' joined')).fadeIn(300);
+            $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
+        });
+        $("#login").toggle();
+        $("#messages").toggle();
+        $("#send").toggle();
+        return false;
     });
 
     $("#send").submit(function () {
@@ -18,6 +27,7 @@ $(function () {
             $('#m').val('');
             $('#m').focus();
             return false;
+
     });
 
     socket.on('chat message', function (msg) {

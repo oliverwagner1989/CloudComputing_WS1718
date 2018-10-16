@@ -36,7 +36,7 @@ io.on('connection', function (socket) {
         addedUser = true;
         console.log(userCount, username);
         //welcome message
-        socket.emit('chat message', date(new Date(), "HH:MM") + ' ' + username + ' Welcome to Socket.IO Chat -');
+        socket.emit('chat message', date(new Date(), "HH:MM") + ' ' + username + ' -- Nice to meet you! -');
 
         //tell every other users someone joined the chat
         socket.broadcast.emit('user joined', {
