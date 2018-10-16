@@ -5,11 +5,12 @@ $(function () {
     socket.emit('add user', username);
     socket.on('user joined', (data) => {
         console.log(data.username + ' joined');
-        $('#messages').append($('<li>').text(data.username + ' joined'));
+        $('#messages').hide().append($('<li class="list-group-item active">').text(data.username + ' joined')).fadeIn(300);
+        $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
     });
 
     $("#send").submit(function () {
-            if ($('#m').val().trim()!='') {
+        if ($('#m').val().trim()!='') {
             socket.emit('chat message', $('#m').val());
             } else {
                 alert("input error");
@@ -52,18 +53,8 @@ function upload(socketio) {
     });
 
     siofu.addEventListener("load", function (event) {
-        uploadComplete("File uploaded: " + event.file.name);
+        $('#messages').hide().append($('<li class="list-group-item active">').text("File uploaded: " + event.file.name)).fadeIn(300);
+        $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
         console.log(event);
     });
-}
-
-// Once a file is successfully uploaded, a message pops in
-function uploadComplete(message) {
-    (function (message) {
-        var flsh = $("<div></div>");
-        flsh.addClass("uploadComplete");
-        flsh.text(message);
-        console.log(flsh);
-        flsh.appendTo(document.body);
-    })(message);
 }

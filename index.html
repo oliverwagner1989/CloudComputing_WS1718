@@ -2,10 +2,15 @@
 <html>
 <head>
     <title>Socket.IO chat</title>
-    <!-- CSS Link <link rel="stylesheet" type="text/css" href="css/style.css" />-->
     <link rel="stylesheet" type="text/css" href="bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+    <style>
+        #send
+        {
+            width: 100%;
+        }
+    </style>
     <!--<style>
         * {
             margin: 0;
@@ -70,7 +75,6 @@
     </style>-->
 
     <script src="/socket.io/socket.io.js"></script>
-    <!--<script src="https://code.jquery.com/jquery-1.11.1.js"></script>-->
     <script src="jquery_min.js"></script>
     <script src="bootstrap.min.js"></script>
     <script src="main.js"></script>
@@ -79,13 +83,21 @@
 
 <body>
 <ul class="list-group list-group-flush" id="messages"></ul>
-<div><form action="" id="send">
-    <input id="m" autocomplete="off" autofocus/>
-    <button class="btn btn-success">Send</button>
+
+<form id="send" class="input-group input-group-lg">
+    <fieldset>
+        <div class="input-group">
+            <input id="m" type="text" class="form-control" placeholder="type your text here" aria-describedby="basic-addon2" autocomplete="off" autofocus>
+            <div class="input-group-append">
+                <button class="btn btn-success">
+                    <i class="fas fa-envelope fa-1x"></i>
+                </button>
+                <button type="button" class="btn btn-warning" id="upload_btn">
+                    <i class="fas fa-angle-double-up fa-1x"></i>
+                </button>
+            </div>
+        </div>
+    </fieldset>
 </form>
-</div>
-<div>
-<button class="btn btn-warning" id="upload_btn">Upload</button>
-</div>
 </body>
 </html>
