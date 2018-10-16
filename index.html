@@ -4,7 +4,8 @@
     <title>Socket.IO chat</title>
     <!-- CSS Link <link rel="stylesheet" type="text/css" href="css/style.css" />-->
     <link rel="stylesheet" type="text/css" href="bootstrap.min.css">
-    <style>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!--<style>
         * {
             margin: 0;
             padding: 0;
@@ -65,7 +66,7 @@
         #messages li:nth-child(odd) {
             background: #bdbdbd;
         }
-    </style>
+    </style>-->
 
     <script src="/socket.io/socket.io.js"></script>
     <!--<script src="https://code.jquery.com/jquery-1.11.1.js"></script>-->
@@ -78,7 +79,7 @@
 <body>
 <ul id="messages"></ul>
 <form action="" id="send">
-    <input id="m" autocomplete="off"/>
+    <input id="m" autocomplete="off" autofocus/>
     <button class="btn">Send</button>
     <button class="btn" id="upload_btn">Upload</button>
 </form>

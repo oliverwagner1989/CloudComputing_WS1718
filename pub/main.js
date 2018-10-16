@@ -11,6 +11,7 @@ $(function () {
     $("#send").submit(function () {
         socket.emit('chat message', $('#m').val());
         $('#m').val('');
+        $('#m').focus();
         return false;
     });
 
