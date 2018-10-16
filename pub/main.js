@@ -9,14 +9,19 @@ $(function () {
     });
 
     $("#send").submit(function () {
-        socket.emit('chat message', $('#m').val());
-        $('#m').val('');
-        $('#m').focus();
-        return false;
+            if ($('#m').val().trim()!='') {
+            socket.emit('chat message', $('#m').val());
+            } else {
+                alert("input error");
+            }
+            $('#m').val('');
+            $('#m').focus();
+            return false;
     });
 
     socket.on('chat message', function (msg) {
-        $('#messages').append($('<li>').text(' ' + msg));
+        $('#messages').hide().append($('<li class="list-group-item active">').text(' ' + msg)).fadeIn(300);
+        $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
     });
 
     upload(socket);
