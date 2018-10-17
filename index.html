@@ -1,7 +1,7 @@
 <!doctype html>
 <html xmlns="http://www.w3.org/1999/html">
 <head>
-    <title>Socket.IO chat</title>
+    <title>LabChat</title>
     <link rel="stylesheet" type="text/css" href="bootstrap.min_flat.css">
     <link rel="stylesheet" type="text/css" href="jquery.cssemoticons.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css"
@@ -21,47 +21,69 @@
             align-items: center;
             justify-content: center;
         }
+
+        .form-control {
+            border-radius: 1rem;
+        }
+
+        .btn {
+            border-radius: 1rem;
+        }
+
     </style>
 </head>
 
 <body>
 <!--LOGIN-->
-<div class="login">
-    <form id="login">
-        <h1 class="display-1">Lab<font color="#708090">Chat</h1>
-        <div class="form-group">
-            <input type="text" class="form-control" id="username" placeholder="Enter Username" autocomplete="off"
-                   autofocus>
-            <small id="userhelp" class="form-text text-muted">Choose something funky!</small>
-        </div>
-    </form>
-</div>
-
-<!--CHAT-->
 <div class="container">
-    <div class="row">
-        <p id="onlineusers"></p>
-    </div>
-    <div class="row">
-        <div class="col-xs-12 col-md-9" id="chat">
-            <ul class="list-group list-group-flush" id="messages"></ul>
-        </div>
-    </div>
-    <div class="row">
+    <div class="row login">
         <div class="col-xs-12">
-            <form id="send" class="input-group mb-3">
-                        <input id="m" type="text" class="form-control" placeholder="type your text here" aria-describedby="basic-addon2" autocomplete="off" autofocus>
-                        <div class="input-group-append">
-                            <button class="btn btn-success">
-                                <i class="fas fa-envelope fa-1x"></i>
-                            </button>
-                            <button type="button" class="btn btn-warning" id="upload_btn">
-                                <i class="fas fa-angle-double-up fa-1x"></i>
-                            </button>
-                        </div>
+            <form id="login">
+                <h1 class="display-1">Lab<font color="#708090">Chat</h1>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="username" placeholder="Enter Username"
+                           autocomplete="off"
+                           autofocus>
+                    <small id="userhelp" class="form-text text-muted">Choose something funky!</small>
+                </div>
             </form>
         </div>
     </div>
+</div>
+
+<!--HEADER-->
+    <div class="row fixed-top bg-primary text-white">
+        <div class="col">
+            <p id="onlineusers" align="center"></p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!--MESSAGE BOX-->
+            <div class="col-xs-12 col-md-12">
+                <ul class="list-group list-group-flush" id="messages">
+                    <ul class="list-group"></ul>
+                </ul>
+            </div>
+    </div>
+        <!--FORM-->
+<div class="row">
+        <div class="container fixed-bottom" id="form">
+            <div class="col-xs-12 col-md-12">
+                <form id="send" class="input-group mb-3">
+                    <input id="m" type="text" class="form-control" placeholder="type your text here"
+                           aria-describedby="basic-addon2" autocomplete="off" autofocus>
+                    <div class="input-group-append">
+                        <button class="btn btn-success">
+                            <i class="fas fa-envelope fa-1x"></i>
+                        </button>
+                        <button type="button" class="btn btn-warning" id="upload_btn">
+                            <i class="fas fa-angle-double-up fa-1x"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
 </div>
 </body>
 </html>

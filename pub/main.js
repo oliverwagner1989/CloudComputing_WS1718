@@ -48,11 +48,13 @@ $(function () {
         $('#messages').hide().append($('<li class="list-group-item active">').text(' ' + msg)).fadeIn(300);
         $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
         $("#messages").emoticonize();
+        updateOnlineUser();
     });
 
     function updateOnlineUser() {
         socket.emit('list', function (list) {
-            $('#onlineusers').replaceWith("Online: " + list);
+            $('#onlineusers').text("Online: "+list);
+            updateOnlineUser();
         });
     }
 
