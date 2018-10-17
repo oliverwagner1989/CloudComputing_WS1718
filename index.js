@@ -14,6 +14,7 @@ var io = require('socket.io').listen(server);
 var date = require('dateformat');
 var SocketIOFileUpload = require("socketio-file-upload");
 var userCount = 0;
+var userlist = [];
 
 app.use(express.static('pub'));
 app.use(SocketIOFileUpload.router);
@@ -32,6 +33,7 @@ io.on('connection', function (socket) {
 
         //store username in socket session for this client
         socket.username = username;
+        userlist.push(username);
         ++userCount;
         addedUser = true;
         console.log(userCount, username);
@@ -46,6 +48,17 @@ io.on('connection', function (socket) {
 
         //if User close the Tab or the Browser
         socket.on('disconnect', function () {
+            console.log(userlist.length);
+            console.log('Tschüss '+socket.username);
+            for (var i = userlist.length-1; i >= 0; i--){
+                if(userlist[i]==socket.username){
+                    userlist.splice(userlist[i],1)
+                }
+            }
+            console.log(userlist.length);
+            for (var i = 0; i < userlist.length; i++){
+                console.log(userlist[i]);
+            }
             console.log('user disconnected');
         });
 
