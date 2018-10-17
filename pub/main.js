@@ -1,8 +1,7 @@
 $(function () {
     var socket = io();
-    $("#messages").toggle();
-    $("#send").toggle();
-
+    $("#chat").toggle();
+    //$("#send").toggle();
     $("#login").submit(function () {
         var username = $("#username").val();
         console.log(username);
@@ -12,9 +11,10 @@ $(function () {
             $('#messages').hide().append($('<li class="list-group-item active">').text(data.username + ' joined')).fadeIn(300);
             $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
         });
-        $("#login").toggle();
-        $("#messages").toggle();
-        $("#send").toggle();
+        $("#login").slideToggle("slow");
+        $("#chat").slideToggle("slow");
+        $('#m').focus();
+        //$("#send").slideToggle("slow");
         return false;
     });
 
@@ -33,6 +33,7 @@ $(function () {
     socket.on('chat message', function (msg) {
         $('#messages').hide().append($('<li class="list-group-item active">').text(' ' + msg)).fadeIn(300);
         $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
+        $("#messages").emoticonize();
     });
 
     upload(socket);
