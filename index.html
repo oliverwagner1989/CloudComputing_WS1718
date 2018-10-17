@@ -2,83 +2,11 @@
 <html xmlns="http://www.w3.org/1999/html">
 <head>
     <title>Socket.IO chat</title>
-    <link rel="stylesheet" type="text/css" href="bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="bootstrap.min_flat.css">
     <link rel="stylesheet" type="text/css" href="jquery.cssemoticons.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css"
+          integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <style>
-        #login {
-            position:fixed;
-            top: 40%;
-            left: 40%;
-        }
-        #send
-        {
-            width: 100%;
-        }
-    </style>
-    <!--<style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font: 13px Helvetica, Arial;
-        }
-
-        #send {
-            background: #000;
-            padding: 3px;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
-
-        #send input {
-            border: 0;
-            padding: 10px;
-            width: 65%;
-            margin-right: .5%;
-        }
-
-        #send button {
-            border: none;
-            border-radius: 12px;
-            width: auto;
-            background: rgb(77, 244, 132);
-            padding: 10px;
-        }
-
-        #send #upload_btn {
-            width: auto;
-            background: rgb(244, 118, 208);
-            padding: 10px;
-        }
-
-        /*        #upload_btn {
-                    width: 9%;
-                    background: rgb(244, 134, 115);
-                    border: none;
-                    padding: 10px;
-                }*/
-
-        #messages {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        #messages li {
-            padding: 5px 10px;
-            background: #ee944d;
-        }
-
-        #messages li:nth-child(odd) {
-            background: #bdbdbd;
-        }
-    </style>-->
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="jquery_min.js"></script>
@@ -86,36 +14,54 @@
     <script src="jquery.cssemoticons.min.js"></script>
     <script src="main.js"></script>
     <script src="/siofu/client.js"></script>
+
+    <style>
+        .login {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
 </head>
 
 <body>
 <!--LOGIN-->
-<form id="login">
-    <div class="form-group">
-        <input type="text" class="form-control" id="username" placeholder="Enter Username" autocomplete="off" autofocus>
-        <small id="userhelp" class="form-text text-muted">Choose something funky!</small>
-    </div>
-</form>
+<div class="login">
+    <form id="login">
+        <h1 class="display-1">Lab<font color="#708090">Chat</h1>
+        <div class="form-group">
+            <input type="text" class="form-control" id="username" placeholder="Enter Username" autocomplete="off"
+                   autofocus>
+            <small id="userhelp" class="form-text text-muted">Choose something funky!</small>
+        </div>
+    </form>
+</div>
 
 <!--CHAT-->
-<div id="chat">
-<ul class="list-group list-group-flush" id="messages"></ul>
-
-<form id="send" class="input-group input-group-lg">
-    <fieldset>
-        <div class="input-group">
-            <input id="m" type="text" class="form-control" placeholder="type your text here" aria-describedby="basic-addon2" autocomplete="off" autofocus>
-            <div class="input-group-append">
-                <button class="btn btn-success">
-                    <i class="fas fa-envelope fa-1x"></i>
-                </button>
-                <button type="button" class="btn btn-warning" id="upload_btn">
-                    <i class="fas fa-angle-double-up fa-1x"></i>
-                </button>
-            </div>
+<div class="container">
+    <div class="row">
+        <p id="onlineusers"></p>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-md-9" id="chat">
+            <ul class="list-group list-group-flush" id="messages"></ul>
         </div>
-    </fieldset>
-</form>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <form id="send" class="input-group mb-3">
+                        <input id="m" type="text" class="form-control" placeholder="type your text here" aria-describedby="basic-addon2" autocomplete="off" autofocus>
+                        <div class="input-group-append">
+                            <button class="btn btn-success">
+                                <i class="fas fa-envelope fa-1x"></i>
+                            </button>
+                            <button type="button" class="btn btn-warning" id="upload_btn">
+                                <i class="fas fa-angle-double-up fa-1x"></i>
+                            </button>
+                        </div>
+            </form>
+        </div>
+    </div>
 </div>
 </body>
 </html>

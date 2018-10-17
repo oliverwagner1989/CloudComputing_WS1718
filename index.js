@@ -1,6 +1,5 @@
 var express = require('express');
 var app = express();
-//var http = require('http').Server(app);
 var fs = require('fs');
 var https = require('https');
 var server = https.createServer({
@@ -31,7 +30,7 @@ io.on('connection', function (socket) {
     socket.on('add user', function (username) {
         if (addedUser) return;
 
-        //store username in socket session for this client
+        //store username in session for this client
         socket.username = username;
         userlist.push(username);
         ++userCount;
@@ -44,6 +43,11 @@ io.on('connection', function (socket) {
         socket.broadcast.emit('user joined', {
             username: socket.username,
             userCount: userCount
+        });
+
+        //sending the list of online users to the client
+        socket.on('list', function (list) {
+            list(userlist);
         });
 
 
@@ -81,8 +85,3 @@ io.on('connection', function (socket) {
         uploader.listen(socket);
     });
 });
-
-
-/*http.listen(3000, function () {
-    console.log('listening on *:3000');
-});*/

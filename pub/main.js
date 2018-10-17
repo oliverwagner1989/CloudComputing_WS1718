@@ -1,32 +1,46 @@
 $(function () {
     var socket = io();
     $("#chat").toggle();
-    //$("#send").toggle();
+    $("#send").toggle();
+    $("#onlineusers").toggle();
     $("#login").submit(function () {
         var username = $("#username").val();
         console.log(username);
         socket.emit('add user', username);
         socket.on('user joined', (data) => {
             console.log(data.username + ' joined');
-            $('#messages').hide().append($('<li class="list-group-item active">').text(data.username + ' joined')).fadeIn(300);
+            $('#messages').hide().append($('<li class="list-group-item">').text(data.username + ' joined')).fadeIn(300);
             $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
         });
         $("#login").slideToggle("slow");
         $("#chat").slideToggle("slow");
+        $("#send").slideToggle("slow");
+        updateOnlineUser();
+        $("#onlineusers").toggle("slow");
         $('#m').focus();
-        //$("#send").slideToggle("slow");
         return false;
     });
 
     $("#send").submit(function () {
-        if ($('#m').val().trim()!='') {
+        updateOnlineUser();
+        var commandList = "\\list";
+        //returns the online users to the client
+        if ($('#m').val().trim()==commandList) {
+            socket.emit('list', function (list) {
+                    updateOnlineUser();
+                    $('#messages').hide().append($('<li class="list-group-item active">').text('Online sind: ' + list)).fadeIn(300);
+                    $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
+                    $("#messages").emoticonize();
+            });
+            //message will be sent if input is not empty
+        } else if ($('#m').val().trim()!='') {
             socket.emit('chat message', $('#m').val());
-            } else {
-                alert("input error");
-            }
-            $('#m').val('');
-            $('#m').focus();
-            return false;
+        } else {
+            alert("input error");
+        }
+        $('#m').val('');
+        $('#m').focus();
+        return false;
 
     });
 
@@ -36,8 +50,15 @@ $(function () {
         $("#messages").emoticonize();
     });
 
+    function updateOnlineUser() {
+        socket.emit('list', function (list) {
+            $('#onlineusers').replaceWith("Online: " + list);
+        });
+    }
+
     upload(socket);
 });
+
 
 
 function upload(socketio) {
