@@ -8,7 +8,7 @@ var server = https.createServer({
     cert: fs.readFileSync('server.cert'),
     requestCert: false,
     rejectUnauthorized: false
-},app, console.log('SSL/TLS listening on 3001, https://localhost:3001'));
+}, app, console.log('SSL/TLS listening on 3001, https://localhost:3001'));
 server.listen(3001);
 var io = require('socket.io').listen(server);
 var date = require('dateformat');
@@ -46,24 +46,30 @@ io.on('connection', function (socket) {
             userCount: userCount
         });
 
+
         //if User close the Tab or the Browser
         socket.on('disconnect', function () {
-            console.log(userlist.length);
-            console.log('Tschüss '+socket.username);
-            for (var i = userlist.length-1; i >= 0; i--){
-                if(userlist[i]==socket.username){
-                    userlist.splice(userlist[i],1)
+            //tell every other users someone left the chat
+            socket.broadcast.emit('chat message', ' ' + username + ' left');
+
+            console.log('before length: ' + userlist.length);
+            for (var i = 0; i < userlist.length; i++) {
+                if (userlist[i] === socket.username) {
+                    console.log(userlist[i] + ' gelöscht...');
+                    userlist.splice(i, 1);
+                    console.log('after length: ' + userlist.length);
                 }
             }
-            console.log(userlist.length);
-            for (var i = 0; i < userlist.length; i++){
-                console.log(userlist[i]);
-            }
-            console.log('user disconnected');
+            --userCount;
+
+            console.log(socket.username + ' disconnected');
+            userlist.forEach((user) => {
+                console.log(user);
+            });
         });
 
         //output Messages
-        socket.on('chat message', function (msg) {
+        socket.on('chat message',  (msg)=> {
             console.log(date(new Date(), "HH:MM") + ' ' + socket.username + ' ' + msg);
             io.emit('chat message', date(new Date(), "HH:MM") + " " + socket.username + " " + msg);
         });
