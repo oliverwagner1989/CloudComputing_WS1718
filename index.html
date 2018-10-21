@@ -13,7 +13,6 @@
     <script src="bootstrap.min.js"></script>
     <script src="jquery.cssemoticons.min.js"></script>
     <script src="main.js"></script>
-    <script src="/siofu/client.js"></script>
 
     <style>
         .login {
@@ -30,6 +29,9 @@
             border-radius: 1rem;
         }
 
+        input[type="file"] {
+            display: none;
+        }
     </style>
 </head>
 
@@ -77,9 +79,13 @@
                         <button class="btn btn-success">
                             <i class="fas fa-envelope fa-1x"></i>
                         </button>
-                        <button type="button" class="btn btn-warning" id="upload_btn">
-                            <i class="fas fa-angle-double-up fa-1x"></i>
-                        </button>
+<!--                        <button class="btn btn-warning dropzone" id="upload_btn">
+                            <i class="fas fa-angle-double-up fa-1x" id="upload_btn_icon"></i>
+                        </button>-->
+                        <label for="file-upload" class="btn btn-warning" id="upload_btn">
+                            <i class="fas fa-angle-double-up fa-1x" id="upload_btn_icon"></i>
+                        </label>
+                        <input id="file-upload" type="file"/>
                     </div>
                 </form>
             </div>

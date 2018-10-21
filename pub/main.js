@@ -1,24 +1,41 @@
 $(function () {
+/*    window.onbeforeunload = function(){
+        return "Are you sure you want to close the window?";
+    };*/
     var socket = io();
+    preventDropButtonDefaultBehaviour();
+    //getFile();
     $("#chat").toggle();
     $("#send").toggle();
     $("#onlineusers").toggle();
     $("#login").submit(function () {
         var username = $("#username").val();
-        console.log(username);
         socket.emit('add user', username);
         socket.on('user joined', (data) => {
-            console.log(data.username + ' joined');
             $('#messages').hide().append($('<li class="list-group-item">').text(data.username + ' joined')).fadeIn(300);
-            $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
         });
+
+        $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
+
         $("#login").slideToggle("slow");
         $("#chat").slideToggle("slow");
         $("#send").slideToggle("slow");
+        changeButtonOnDragover();
         updateOnlineUser();
         $("#onlineusers").toggle("slow");
         $('#m').focus();
         return false;
+    });
+
+    //File transfer
+    //once a file is picked via input[type=file], the file will be decoded to base64 and sent to the server for further processing
+    //$('#upload_btn').on('drop', function () {
+    $('#file-upload').on('change', function () {
+        var reader = new FileReader();
+        reader.onload = function(event) {
+            socket.emit('sendFile', event.target.result);
+        };
+        reader.readAsDataURL(document.querySelector('input[type=file]').files[0]);
     });
 
     $("#send").submit(function () {
@@ -51,44 +68,51 @@ $(function () {
         updateOnlineUser();
     });
 
+    //if a users uploads a file via input[type=file], the base64-encoded image will be appended to the messages list
+    socket.on('img', (data) => {
+        console.log('append');
+        const imgTag = `<img height="20%" width="20%" src="${data}"/>`; // inject into DOM
+        $('#messages').append(imgTag);
+    });
+
+    //constantly updating the list of active users
     function updateOnlineUser() {
         socket.emit('list', function (list) {
             $('#onlineusers').text("Online: "+list);
             updateOnlineUser();
         });
     }
-
-    upload(socket);
 });
 
-
-
-function upload(socketio) {
-    // Initialize instances:
-    var socket = socketio.connect();
-    var siofu = new SocketIOFileUpload(socket);
-    console.log(siofu);
-
-    // Configure the three ways that SocketIOFileUpload can read files:
-    document.getElementById("upload_btn").addEventListener("click", siofu.prompt, false);
-    //siofu.listenOnInput(document.getElementById("upload_input"));
-    //siofu.listenOnDrop(document.getElementById("file_drop"));
-
-    // Do something on upload progress:
-    siofu.addEventListener("progress", function (event) {
-        var percent = event.bytesLoaded / event.file.size * 100;
-        console.log("File is", percent.toFixed(2), "percent loaded");
+function preventDropButtonDefaultBehaviour() {
+    $("html").on("dragover", function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        $(this).addClass('dragging');
     });
 
-    // Do something when a file is uploaded:
-    siofu.addEventListener("complete", function (event) {
-        console.log(event.success);
-        console.log(event.file);
+    $("html").on("dragleave", function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        $(this).removeClass('dragging');
     });
 
-    siofu.addEventListener("load", function (event) {
-        $('#messages').hide().append($('<li class="list-group-item active">').text("File uploaded: " + event.file.name)).fadeIn(300);
-        $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
-        console.log(event);
+    $("html").on("drop", function(event) {
+        event.preventDefault();
+        event.stopPropagation();
     });
+}
+
+function changeButtonOnDragover() {
+    $('#upload_btn').on('dragover', function () {
+        $('#upload_btn').removeClass("btn btn-warning");
+        $('#upload_btn').addClass("btn btn-danger btn-lg");
+        $('#upload_btn_icon').html("<br/><font face='verdana'> Drop your file here!</font>");
+    });
+    $('#upload_btn').on('dragleave drop', function () {
+        $('#upload_btn').removeClass("btn btn-danger btn-lg");
+        $('#upload_btn').addClass("btn btn-warning");
+        $('#upload_btn_icon').html("");
+    });
+
 }

@@ -11,12 +11,10 @@ var server = https.createServer({
 server.listen(3001);
 var io = require('socket.io').listen(server);
 var date = require('dateformat');
-var SocketIOFileUpload = require("socketio-file-upload");
 var userCount = 0;
 var userlist = [];
 
 app.use(express.static('pub'));
-app.use(SocketIOFileUpload.router);
 
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
@@ -51,6 +49,10 @@ io.on('connection', function (socket) {
         });
 
 
+        socket.on('sendFile', function(base64) {
+            console.log('sendFile');
+            io.emit('img', base64);
+        });
         //if User close the Tab or the Browser
         socket.on('disconnect', function () {
             //tell every other users someone left the chat
@@ -77,11 +79,5 @@ io.on('connection', function (socket) {
             console.log(date(new Date(), "HH:MM") + ' ' + socket.username + ' ' + msg);
             io.emit('chat message', date(new Date(), "HH:MM") + " " + socket.username + " " + msg);
         });
-
-        /*    Uploadshit
-            Make an instance of SocketIOFileUpload and listen on this socket:*/
-        var uploader = new SocketIOFileUpload();
-        uploader.dir = __dirname + "/pub/uploads";
-        uploader.listen(socket);
     });
 });
