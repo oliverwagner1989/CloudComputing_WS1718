@@ -1,3 +1,15 @@
+/*
+ _           _     _____ _           _
+| |         | |   /  __ \ |         | |
+| |     __ _| |__ | /  \/ |__   __ _| |_
+| |    / _` | '_ \| |   | '_ \ / _` | __|
+| |___| (_| | |_) | \__/\ | | | (_| | |_
+\_____/\__,_|_.__/ \____/_| |_|\__,_|\__|
+
+Hanna Schulze, Oliver Wagner // 2018
+Reutlingen University; Cloud Computing Ex1 WS2018/19
+*/
+
 var express = require('express');
 var app = express();
 var fs = require('fs');
@@ -50,7 +62,6 @@ io.on('connection', function (socket) {
 
 
         socket.on('sendFile', function(base64) {
-            console.log('sendFile');
             io.emit('img', base64);
         });
         //if User close the Tab or the Browser

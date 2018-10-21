@@ -1,3 +1,15 @@
+/*
+ _           _     _____ _           _
+| |         | |   /  __ \ |         | |
+| |     __ _| |__ | /  \/ |__   __ _| |_
+| |    / _` | '_ \| |   | '_ \ / _` | __|
+| |___| (_| | |_) | \__/\ | | | (_| | |_
+\_____/\__,_|_.__/ \____/_| |_|\__,_|\__|
+
+Hanna Schulze, Oliver Wagner // 2018
+Reutlingen University; Cloud Computing Ex1 WS2018/19
+*/
+
 $(function () {
 /*    window.onbeforeunload = function(){
         return "Are you sure you want to close the window?";
@@ -70,7 +82,6 @@ $(function () {
 
     //if a users uploads a file via input[type=file], the base64-encoded image will be appended to the messages list
     socket.on('img', (data) => {
-        console.log('append');
         const imgTag = `<img height="20%" width="20%" src="${data}"/>`; // inject into DOM
         $('#messages').append(imgTag);
     });
