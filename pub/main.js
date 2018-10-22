@@ -16,8 +16,7 @@ $(function () {
     };*/
     var socket = io();
     preventDropButtonDefaultBehaviour();
-    //getFile();
-    $("#chat").toggle();
+    $("#messageBox").toggle();
     $("#send").toggle();
     $("#onlineusers").toggle();
     $("#login").submit(function () {
@@ -30,7 +29,7 @@ $(function () {
         $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
 
         $("#login").slideToggle("slow");
-        $("#chat").slideToggle("slow");
+        $("#messageBox").slideToggle("slow");
         $("#send").slideToggle("slow");
         changeButtonOnDragover();
         updateOnlineUser();
@@ -51,12 +50,10 @@ $(function () {
     });
 
     $("#send").submit(function () {
-        updateOnlineUser();
         var commandList = "\\list";
         //returns the online users to the client
         if ($('#m').val().trim()==commandList) {
             socket.emit('list', function (list) {
-                    updateOnlineUser();
                     $('#messages').hide().append($('<li class="list-group-item active">').text('Online sind: ' + list)).fadeIn(300);
                     $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
                     $("#messages").emoticonize();
@@ -74,16 +71,16 @@ $(function () {
     });
 
     socket.on('chat message', function (msg) {
-        $('#messages').hide().append($('<li class="list-group-item active">').text(' ' + msg)).fadeIn(300);
-        $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
-        $("#messages").emoticonize();
-        updateOnlineUser();
+            $('#messages').hide().append($('<li class="list-group-item active">').text(' ' + msg)).fadeIn(300);
+            $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
+            $("#messages").emoticonize();
     });
 
     //if a users uploads a file via input[type=file], the base64-encoded image will be appended to the messages list
     socket.on('img', (data) => {
-        const imgTag = `<img height="20%" width="20%" src="${data}"/>`; // inject into DOM
-        $('#messages').append(imgTag);
+        var imgTag = `<img style="width:100%;max-width:200px" id="myImg" src="${data}"/>`;
+        $('#messages').hide().append($('<li class="list-group-item active">').html(imgTag)).fadeIn(300);
+        $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
     });
 
     //constantly updating the list of active users
