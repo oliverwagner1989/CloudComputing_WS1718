@@ -62,7 +62,15 @@ io.on('connection', function (socket) {
 
 
         socket.on('sendFile', function(base64) {
-            io.emit('img', base64);
+            if (base64.includes("image")) {
+                io.emit('img', base64);
+            }
+            if (base64.includes("audio")) {
+                io.emit('audio', base64);
+            }
+            if (base64.includes("video")) {
+                io.emit('vid', base64);
+            }
         });
         //if User close the Tab or the Browser
         socket.on('disconnect', function () {

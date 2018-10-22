@@ -44,6 +44,7 @@ $(function () {
     $('#file-upload').on('change', function () {
         var reader = new FileReader();
         reader.onload = function(event) {
+            //console.log(event.target.result);
             socket.emit('sendFile', event.target.result);
         };
         reader.readAsDataURL(document.querySelector('input[type=file]').files[0]);
@@ -80,6 +81,18 @@ $(function () {
     socket.on('img', (data) => {
         var imgTag = `<img style="width:100%;max-width:200px" id="myImg" src="${data}"/>`;
         $('#messages').hide().append($('<li class="list-group-item active">').html(imgTag)).fadeIn(300);
+        $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
+    });
+
+    socket.on('vid', (data) => {
+        var vidTag = `<video width="320" height="240" controls><source src="${data}"></video>`;
+        $('#messages').hide().append($('<li class="list-group-item active">').html(vidTag)).fadeIn(300);
+        $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
+    });
+
+    socket.on('audio', (data) => {
+        var audioTag = `<audio controls><source src="${data}"></audio>`;
+        $('#messages').hide().append($('<li class="list-group-item active">').html(audioTag)).fadeIn(300);
         $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
     });
 
