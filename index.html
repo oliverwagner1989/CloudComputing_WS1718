@@ -28,6 +28,13 @@ Reutlingen University; Cloud Computing Ex1 WS2018/19
     <script src="main.js"></script>
 
     <style>
+        .list-group{
+            max-height: 400px;
+            margin-top: 30px;
+            overflow-y:scroll;
+            -webkit-overflow-scrolling: touch;
+        }
+
         .login {
             display: flex;
             align-items: center;
@@ -67,24 +74,24 @@ Reutlingen University; Cloud Computing Ex1 WS2018/19
 </div>
 
 <!--HEADER-->
+<div class="container">
     <div class="row fixed-top bg-primary text-white">
-        <div class="col">
+        <div class="col-sm-12">
             <p id="onlineusers" align="center"></p>
         </div>
     </div>
+</div>
 
-    <div class="container">
+<div class="container">
+    <div class="row">
         <!--MESSAGE BOX-->
-            <div id="messageBox" class="col-xs-12 col-md-12">
-                <ul class="list-group list-group-flush" id="messages">
-                    <ul class="list-group"></ul>
-                </ul>
-            </div>
+        <div id="messageBox" class="col-sm-12">
+            <ul class="list-group list-group-flush" id="messages"></ul>
+        </div>
     </div>
-        <!--FORM-->
-<div class="row">
-        <div class="container fixed-bottom" id="form">
-            <div class="col-xs-12 col-md-12">
+    <!--INPUT FORM-->
+    <div class="row">
+        <div class="col-sm-12 fixed-bottom">
                 <form id="send" class="input-group mb-3">
                     <input id="m" type="text" class="form-control" placeholder="type your text here"
                            aria-describedby="basic-addon2" autocomplete="off" autofocus>
@@ -92,17 +99,18 @@ Reutlingen University; Cloud Computing Ex1 WS2018/19
                         <button class="btn btn-success">
                             <i class="fas fa-envelope fa-1x"></i>
                         </button>
-<!--                        <button class="btn btn-warning dropzone" id="upload_btn">
-                            <i class="fas fa-angle-double-up fa-1x" id="upload_btn_icon"></i>
-                        </button>-->
+                        <!--                        <button class="btn btn-warning dropzone" id="upload_btn">
+                                                    <i class="fas fa-angle-double-up fa-1x" id="upload_btn_icon"></i>
+                                                </button>-->
                         <label for="file-upload" class="btn btn-warning" id="upload_btn">
                             <i class="fas fa-angle-double-up fa-1x" id="upload_btn_icon"></i>
                         </label>
                         <input id="file-upload" type="file"/>
                     </div>
                 </form>
-            </div>
         </div>
+    </div>
 </div>
+
 </body>
 </html>

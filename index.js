@@ -100,13 +100,17 @@ io.on('connection', function (socket) {
                     io.sockets.connected[usermap[fileWhispername]].emit('img', "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
                     socket.emit('img',  "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
                 }
-                if (base64.includes("audio")) {
+                else if (base64.includes("audio")) {
                     io.sockets.connected[usermap[fileWhispername]].emit('audio',  "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
                     socket.emit('audio',  "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
                 }
-                if (base64.includes("video")) {
+                else if (base64.includes("video")) {
                     io.sockets.connected[usermap[fileWhispername]].emit('vid',  "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
                     socket.emit('vid',  "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
+                }
+                else if (base64.includes("pdf")) {
+                    io.sockets.connected[usermap[fileWhispername]].emit('pdf',  "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
+                    socket.emit('pdf',  "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
                 }
                 fileWhispername = null;
                 fileWhisperID = null;
@@ -114,17 +118,16 @@ io.on('connection', function (socket) {
                 console.log("FileWhisperID = null " + fileWhispername);
 
             } else{
-
                 if (base64.includes("image")) {
                     io.emit('img', date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
                 }
-                if (base64.includes("audio")) {
+                else if (base64.includes("audio")) {
                     io.emit('audio', date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
                 }
-                if (base64.includes("video")) {
+                else if (base64.includes("video")) {
                     io.emit('vid', date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
                 }
-                if (base64.includes("pdf")) {
+                else if (base64.includes("pdf")) {
                     io.emit('pdf', date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
                 }
             }

@@ -15,6 +15,7 @@ $(function () {
         return "Are you sure you want to close the window?";
     };*/
     var socket = io();
+    var reader = new FileReader();
     preventDropButtonDefaultBehaviour();
     $("#messageBox").toggle();
     $("#send").toggle();
@@ -43,9 +44,7 @@ $(function () {
     //once a file is picked via input[type=file], the file will be decoded to base64 and sent to the server for further processing
     //$('#upload_btn').on('drop', function () {
     $("#file-upload").on('change', function () {
-        var reader = new FileReader();
         reader.onload = function(event) {
-            //console.log(event.target.result);
             socket.emit('sendFile', event.target.result);
         };
         reader.readAsDataURL(document.querySelector('input[type=file]').files[0]);
@@ -59,7 +58,7 @@ $(function () {
             socket.emit('list', function (list) {
                     $('#messages').hide().append($('<li class="list-group-item active">').text('Online sind: ' + list)).fadeIn(300);
                     $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
-                    $("#messages").emoticonize();
+                    //$("#messages").emoticonize();
             });
 
          //message will be whispered to a single person
@@ -68,7 +67,6 @@ $(function () {
          //message will be sent if input is not empty
         } else if ($('#m').val().trim()!='') {
             socket.emit('chat message', $('#m').val());
-
         } else {
             alert("input error");
         }
@@ -79,9 +77,9 @@ $(function () {
     });
 
     socket.on('chat message', function (msg) {
-            $('#messages').hide().append($('<li class="list-group-item active">').text(' ' + msg)).fadeIn(300);
+            $('#messages').hide().append($('<li class="list-group-item active">').text(' ' + msg).emoticonize()).fadeIn(300);
             $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
-            $("#messages").emoticonize();
+            $("#messages").animate({ scrollTop: $("#messages")[0].scrollHeight});
     });
 
     //if a users uploads a file via input[type=file], the base64-encoded image will be appended to the messages list
@@ -89,25 +87,27 @@ $(function () {
         var imgTag = `<img style="width:100%;max-width:200px" id="myImg" src="${data}"/>`;
         $('#messages').hide().append($('<li class="list-group-item active">').html(msg + ' ' + imgTag)).fadeIn(300);
         $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
+        $("#messages").animate({ scrollTop: $("#messages")[0].scrollHeight});
     });
 
     socket.on('vid', (msg, data) => {
         var vidTag = `<video width="320" height="240" controls><source src="${data}"></video>`;
         $('#messages').hide().append($('<li class="list-group-item active">').html(msg + ' ' + vidTag)).fadeIn(300);
         $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
+        $("#messages").animate({ scrollTop: $("#messages")[0].scrollHeight});
     });
 
     socket.on('audio', (msg, data) => {
         var audioTag = `<audio controls><source src="${data}"></audio>`;
         $('#messages').hide().append($('<li class="list-group-item active">').html(msg + ' ' + audioTag)).fadeIn(300);
         $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
+        $("#messages").animate({ scrollTop: $("#messages")[0].scrollHeight});
     });
-
     socket.on('pdf', (msg, data) => {
         var pdfTag = `<embed src="${data}" width="600" height="500" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html">`;
         $('#messages').hide().append($('<li class="list-group-item active">').html(msg + ' ' + pdfTag)).fadeIn(300);
         $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
-
+        $("#messages").animate({ scrollTop: $("#messages")[0].scrollHeight});
     });
 
     socket.on('alert', (msg) => {
