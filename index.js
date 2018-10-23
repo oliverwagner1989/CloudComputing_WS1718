@@ -126,7 +126,15 @@ io.on('connection', function (socket) {
                 }
 
             }
-
+            if (base64.includes("audio")) {
+                io.emit('audio', base64);
+            }
+            if (base64.includes("video")) {
+                io.emit('vid', base64);
+            }
+            if (base64.includes("pdf")) {
+                io.emit('pdf', base64);
+            }
         });
 
         //if User close the Tab or the Browser
