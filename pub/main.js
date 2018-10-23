@@ -87,26 +87,24 @@ $(function () {
     //if a users uploads a file via input[type=file], the base64-encoded image will be appended to the messages list
     socket.on('img', (msg, data) => {
         var imgTag = `<img style="width:100%;max-width:200px" id="myImg" src="${data}"/>`;
-        $('#messages').append($('<li class="list-group-item active">').html(imgTag));
+        $('#messages').hide().append($('<li class="list-group-item active">').html(msg + ' ' + imgTag)).fadeIn(300);
         $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
     });
 
     socket.on('vid', (msg, data) => {
         var vidTag = `<video width="320" height="240" controls><source src="${data}"></video>`;
-        $('#messages').append($('<li class="list-group-item active">').html(vidTag));
+        $('#messages').hide().append($('<li class="list-group-item active">').html(msg + ' ' + vidTag)).fadeIn(300);
         $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
     });
 
     socket.on('audio', (msg, data) => {
         var audioTag = `<audio controls><source src="${data}"></audio>`;
-        $('#messages').append($('<li class="list-group-item active">').html(audioTag));
+        $('#messages').hide().append($('<li class="list-group-item active">').html(msg + ' ' + audioTag)).fadeIn(300);
         $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
     });
 
-    socket.on('pdf', (data) => {
-       var pdfTag = `<embed src="${data}" width="600" height="500" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html">`;
-        $('#messages').append($('<li class="list-group-item active">').html(pdfTag));
-        $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
+    socket.on('alert', (msg) => {
+        alert(msg);
     });
 
     //constantly updating the list of active users
