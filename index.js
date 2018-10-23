@@ -19,7 +19,20 @@ var server = https.createServer({
     cert: fs.readFileSync('server.cert'),
     requestCert: false,
     rejectUnauthorized: false
-}, app, console.log('SSL/TLS listening on 3001, https://localhost:3001'));
+}, app, console.log(`
+ _           _     _____ _           _
+| |         | |   /  __ \\ |         | |
+| |     __ _| |__ | /  \\/ |__   __ _| |_
+| |    / _\` | '_ \\| |   | '_ \\ / _\` | __|
+| |___| (_| | |_) | \\__/\\ | | | (_| | |_
+\\_____/\\__,_|_.__/ \\____/_| |_|\\__,_|\\__|
+
+S S L / T L S    L I S T E N I N G    O N   P O R T    3 0 0 1
+https://localhost:3001
+
+Hanna Schulze, Oliver Wagner // 2018
+Reutlingen University; Cloud Computing Ex1 WS2018/19
+`));
 server.listen(3001);
 var io = require('socket.io').listen(server);
 var date = require('dateformat');
