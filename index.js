@@ -25,6 +25,10 @@ var io = require('socket.io').listen(server);
 var date = require('dateformat');
 var userCount = 0;
 var userlist = [];
+//Hashmap safes socket.id for whisper mode
+var usermap = {};
+var fileWhispername;
+var fileWhisperID;
 
 app.use(express.static('pub'));
 
@@ -32,16 +36,17 @@ app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
 });
 
-
 io.on('connection', function (socket) {
     console.log('a user connected');
 
     var addedUser = false;
-    socket.on('add user', function (username) {
+    socket.on('add user', function (username, res) {
         if (addedUser) return;
 
         //store username in session for this client
         socket.username = username;
+        //add username as key, id as value  to the map
+        usermap[socket.username] = socket.id;
         userlist.push(username);
         ++userCount;
         addedUser = true;
@@ -60,18 +65,70 @@ io.on('connection', function (socket) {
             list(userlist);
         });
 
+        //whisper mode
+        socket.on('whisper', function (message) {
+            //split @, username and message from each other
+            var res = message.split("@");
+            var username = res[1].split(" ", 1);
+            var whisperMessage = res[1].slice(username[0].length, res[1].length);
+            console.log("AN: " + username + " " + whisperMessage);
+            if (usermap[username]) {
+                if(whisperMessage === " \\file"){
+                    //Send file to selected user and sender
+                    fileWhispername = username;
+                    fileWhisperID = usermap[socket.username];
+                    console.log("Saved fileWhispername: " + fileWhispername);
+                    console.log("Saved fileWhispername: " + fileWhisperID);
 
-        socket.on('sendFile', function(base64) {
-            if (base64.includes("image")) {
-                io.emit('img', base64);
-            }
-            if (base64.includes("audio")) {
-                io.emit('audio', base64);
-            }
-            if (base64.includes("video")) {
-                io.emit('vid', base64);
+                }else{
+                    //Send to selected user and sender
+                    io.sockets.connected[usermap[username]].emit('chat message', "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " " + whisperMessage);
+                    socket.emit('chat message', "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " " + whisperMessage);
+                }
+
+            }else{
+                //Send alert if selected username is wrong
+                console.log("the selected user doesn't exist please check the username of your friend!");
+                socket.emit('alert', "the selected user doesn't exist please check the username of your friend!");
             }
         });
+
+        socket.on('sendFile', function(base64) {
+            if(fileWhisperID === usermap[socket.username] && fileWhispername != null){
+                console.log("filewhispername != null: " + fileWhispername);
+                if (base64.includes("image")) {
+                    io.sockets.connected[usermap[fileWhispername]].emit('img', "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
+                    socket.emit('img',  "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
+                }
+                if (base64.includes("audio")) {
+                    io.sockets.connected[usermap[fileWhispername]].emit('audio',  "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
+                    socket.emit('audio',  "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
+                }
+                if (base64.includes("video")) {
+                    io.sockets.connected[usermap[fileWhispername]].emit('vid',  "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
+                    socket.emit('vid',  "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
+                }
+                fileWhispername = null;
+                fileWhisperID = null;
+                console.log("FileWhispername = null " + fileWhispername);
+                console.log("FileWhisperID = null " + fileWhispername);
+
+            } else{
+
+                if (base64.includes("image")) {
+                    io.emit('img', date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
+                }
+                if (base64.includes("audio")) {
+                    io.emit('audio', date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
+                }
+                if (base64.includes("video")) {
+                    io.emit('vid', date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
+                }
+
+            }
+
+        });
+
         //if User close the Tab or the Browser
         socket.on('disconnect', function () {
             //tell every other users someone left the chat
@@ -82,11 +139,11 @@ io.on('connection', function (socket) {
                 if (userlist[i] === socket.username) {
                     console.log(userlist[i] + ' gelöscht...');
                     userlist.splice(i, 1);
+                    //console.log(usermap.delete(username));
                     console.log('after length: ' + userlist.length);
                 }
             }
             --userCount;
-
             console.log(socket.username + ' disconnected');
             userlist.forEach((user) => {
                 console.log(user);
@@ -94,7 +151,7 @@ io.on('connection', function (socket) {
         });
 
         //output Messages
-        socket.on('chat message',  (msg)=> {
+        socket.on('chat message',  function (msg) {
             console.log(date(new Date(), "HH:MM") + ' ' + socket.username + ' ' + msg);
             io.emit('chat message', date(new Date(), "HH:MM") + " " + socket.username + " " + msg);
         });
