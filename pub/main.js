@@ -103,6 +103,13 @@ $(function () {
         $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
     });
 
+    socket.on('pdf', (msg, data) => {
+        var pdfTag = `<embed src="${data}" width="600" height="500" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html">`;
+        $('#messages').hide().append($('<li class="list-group-item active">').html(msg + ' ' + pdfTag)).fadeIn(300);
+        $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
+
+    });
+
     socket.on('alert', (msg) => {
         alert(msg);
     });

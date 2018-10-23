@@ -124,7 +124,9 @@ io.on('connection', function (socket) {
                 if (base64.includes("video")) {
                     io.emit('vid', date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
                 }
-
+                if (base64.includes("pdf")) {
+                    io.emit('pdf', date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
+                }
             }
 
         });
