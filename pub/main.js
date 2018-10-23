@@ -17,26 +17,35 @@ $(function () {
     var socket = io();
     var reader = new FileReader();
     preventDropButtonDefaultBehaviour();
-    $("#messageBox").toggle();
-    $("#send").toggle();
-    $("#onlineusers").toggle();
+    $("#messageBox").hide();
+    $("#send").hide();
+    $("#onlineusers").hide();
     $("#login").submit(function () {
         var username = $("#username").val().trim();
 
-        socket.emit('add user', username);
-        socket.on('user joined', function(data){
-            $('#messages').hide().append($('<li class="list-group-item">').text(data.username + ' joined')).fadeIn(300);
-        });
+        if(username.length > 0){
+            //check if wanted username is already used, if not add
+            socket.emit('add user', username);
 
-        $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
+            socket.on('user joined', function(data){
+                $('#messages').hide().append($('<li class="list-group-item">').text(data.username + ' joined')).fadeIn(300);
+            });
 
-        $("#login").slideToggle("slow");
-        $("#messageBox").slideToggle("slow");
-        $("#send").slideToggle("slow");
-        changeButtonOnDragover();
-        updateOnlineUser();
-        $("#onlineusers").toggle("slow");
-        $('#m').focus();
+            socket.on('enter chatroom', function () {
+                //console.log("nicht 2 mal ausgeben!!!");
+                $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
+
+                $("#login").hide("slow");
+                $("#messageBox").show("slow");
+                $("#send").show("slow");
+                changeButtonOnDragover();
+                updateOnlineUser();
+                $("#onlineusers").show("slow");
+                $('#m').focus();
+            });
+        }else{
+            alert("Please enter a Username!");
+        }
         return false;
     });
 
