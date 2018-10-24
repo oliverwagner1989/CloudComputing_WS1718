@@ -43,7 +43,7 @@ $(function () {
                 $("#messageBox").show("slow");
                 $("#send").show("slow");
 
-                changeButtonOnDragover();
+                //changeButtonOnDragover();
                 updateOnlineUser();
                 $("#onlineusers").show("slow"); //showing the navbar displaying the active user
                 $('#m').focus();
