@@ -11,39 +11,45 @@ Reutlingen University; Cloud Computing Ex1 WS2018/19
 */
 
 $(function () {
-/*    window.onbeforeunload = function(){
+    window.onbeforeunload = function(){ //prevents closing/refreshing the chat window on accident
         return "Are you sure you want to close the window?";
-    };*/
+    };
     var socket = io();
     var reader = new FileReader();
-    preventDropButtonDefaultBehaviour();
+    //preventDropButtonDefaultBehaviour();
+
+    //hiding the chat elements on login
     $("#messageBox").hide();
     $("#send").hide();
     $("#onlineusers").hide();
-    $("#login").submit(function () {
-        var username = $("#username").val().trim();
 
-        if(username.length > 0){
-            //check if wanted username is already used, if not add
+
+    $("#login").submit(function () {
+        var username = $("#username").val().trim(); //removing blank spaces at the end of username input
+
+
+        if(username.length > 0){ //in case entered username is not empty, username will be sent to server
             socket.emit('add user', username);
 
-            socket.on('user joined', function(data){
+            socket.on('user joined', function(data){ //displaying message that the user has joined the chat
                 $('#messages').hide().append($('<li class="list-group-item">').text(data.username + ' joined')).fadeIn(300);
             });
 
             socket.on('enter chatroom', function () {
-                //console.log("nicht 2 mal ausgeben!!!");
                 $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
 
+                //hiding the login elements after sucessful login and show the chat elements
                 $("#login").hide("slow");
                 $("#messageBox").show("slow");
                 $("#send").show("slow");
+
                 changeButtonOnDragover();
                 updateOnlineUser();
-                $("#onlineusers").show("slow");
+                $("#onlineusers").show("slow"); //showing the navbar displaying the active user
                 $('#m').focus();
             });
         }else{
+            //in case entered username is empty
             alert("Please enter a Username!");
         }
         return false;
@@ -62,7 +68,7 @@ $(function () {
 
     $("#send").submit(function () {
         var commandList = "\\list";
-        //returns the online users to the client
+        //returns the online users to the client when user is sending the message "\list"
         if ($('#m').val().trim()==commandList) {
             socket.emit('list', function (list) {
                     $('#messages').hide().append($('<li class="list-group-item active">').text('Online sind: ' + list)).fadeIn(300);
@@ -70,21 +76,22 @@ $(function () {
                     //$("#messages").emoticonize();
             });
 
-         //message will be whispered to a single person
+         //message will be whispered to a single person when user is sending a message '@user message'
         }else if ($('#m').val().trim().match(/^(@)\w+/)){
             socket.emit('whisper', $('#m').val());
-         //message will be sent if input is not empty
+         //empty messages cannot be send
         } else if ($('#m').val().trim()!='') {
             socket.emit('chat message', $('#m').val());
         } else {
             alert("input error");
         }
-        $('#m').val('');
+        $('#m').val(''); //emptying the input form after a messae is sent
         $('#m').focus();
         return false;
 
     });
 
+    //appending a new message to the message list
     socket.on('chat message', function (msg) {
             $('#messages').hide().append($('<li class="list-group-item active">').text(' ' + msg).emoticonize()).fadeIn(300);
             $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
@@ -92,33 +99,34 @@ $(function () {
     });
 
     //if a users uploads a file via input[type=file], the base64-encoded image will be appended to the messages list
-    socket.on('img', (msg, data) => {
+    socket.on('img', (msg, data) => { //for images
         var imgTag = `<img style="width:100%;max-width:200px" id="myImg" src="${data}"/>`;
         $('#messages').hide().append($('<li class="list-group-item active">').html(msg + ' ' + imgTag)).fadeIn(300);
         $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
         $("#messages").animate({ scrollTop: $("#messages")[0].scrollHeight});
     });
 
-    socket.on('vid', (msg, data) => {
+    socket.on('vid', (msg, data) => { //for videos
         var vidTag = `<video width="320" height="240" controls><source src="${data}"></video>`;
         $('#messages').hide().append($('<li class="list-group-item active">').html(msg + ' ' + vidTag)).fadeIn(300);
         $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
         $("#messages").animate({ scrollTop: $("#messages")[0].scrollHeight});
     });
 
-    socket.on('audio', (msg, data) => {
+    socket.on('audio', (msg, data) => { //for audio files
         var audioTag = `<audio controls><source src="${data}"></audio>`;
         $('#messages').hide().append($('<li class="list-group-item active">').html(msg + ' ' + audioTag)).fadeIn(300);
         $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
         $("#messages").animate({ scrollTop: $("#messages")[0].scrollHeight});
     });
-    socket.on('pdf', (msg, data) => {
+    socket.on('pdf', (msg, data) => { //for pdf documents
         var pdfTag = `<embed src="${data}" width="600" height="500" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html">`;
         $('#messages').hide().append($('<li class="list-group-item active">').html(msg + ' ' + pdfTag)).fadeIn(300);
         $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
         $("#messages").animate({ scrollTop: $("#messages")[0].scrollHeight});
     });
 
+    //in case an alert is needed
     socket.on('alert', (msg) => {
         alert(msg);
     });
@@ -132,7 +140,7 @@ $(function () {
     }
 });
 
-function preventDropButtonDefaultBehaviour() {
+/*function preventDropButtonDefaultBehaviour() {
     $("html").on("dragover", function(event) {
         event.preventDefault();
         event.stopPropagation();
@@ -149,8 +157,9 @@ function preventDropButtonDefaultBehaviour() {
         event.preventDefault();
         event.stopPropagation();
     });
-}
+}*/
 
+/*
 function changeButtonOnDragover() {
     $('#upload_btn').on('dragover', function () {
         $('#upload_btn').removeClass("btn btn-warning");
@@ -163,4 +172,4 @@ function changeButtonOnDragover() {
         $('#upload_btn_icon').html("");
     });
 
-}
+}*/
