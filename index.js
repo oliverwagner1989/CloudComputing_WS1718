@@ -33,13 +33,13 @@ https://localhost:3001
 Hanna Schulze, Oliver Wagner // 2018
 Reutlingen University; Cloud Computing Ex1 WS2018/19
 `));
+
 server.listen(3001);
 var io = require('socket.io').listen(server);
 var date = require('dateformat');
 var userCount = 0;
 var userlist = [];
-//Hashmap safes socket.id for whisper mode
-var usermap = {};
+var usermap = {}; //Hashmap safes socket.id for whisper mode
 var fileWhispername;
 var fileWhisperID;
 
@@ -50,10 +50,14 @@ app.get('/', function (req, res) {
 });
 
 io.on('connection', function (socket) {
-    console.log('a user connected');
-
-    socket.on('add user', function (username, res) {
-        var check = usermap[username];
+    //checks if user already exists and add them if not
+    socket.on('add user', function (username) {
+        var check = false;
+        userlist.forEach(name =>{
+            if(name === username){
+                check = true;
+            }
+        });
         if (!check) {
             //store username in session for this client
             socket.username = username;
@@ -62,10 +66,11 @@ io.on('connection', function (socket) {
             userlist.push(username);
             ++userCount;
 
-            console.log(userCount, username);
+            console.log(username + ' connected');
+
             //welcome message
             socket.emit('chat message', date(new Date(), "HH:MM") + ' ' + username + ' -- Nice to meet you! -');
-
+            //hide login and show text input and textfield
             socket.emit('enter chatroom');
 
             //tell every other users someone joined the chat
@@ -84,35 +89,34 @@ io.on('connection', function (socket) {
         list(userlist);
     });
 
-    //whisper mode
+    //send messages & files only to one user
     socket.on('whisper', function (message) {
         //split @, username and message from each other
         var res = message.split("@");
         var username = res[1].split(" ", 1);
         var whisperMessage = res[1].slice(username[0].length, res[1].length);
-        console.log("AN: " + username + " " + whisperMessage);
+        //check if receiver exists
         if (usermap[username]) {
             if(whisperMessage === " \\file"){
-                //Send file to selected user and sender
+                //Save receiver for sending whisper file
                 fileWhispername = username;
                 fileWhisperID = usermap[socket.username];
-                console.log("Saved fileWhispername: " + fileWhispername);
-                console.log("Saved fileWhispername: " + fileWhisperID);
 
             }else{
-                //Send to selected user and sender
+                //Send whispermessage to selected user and sender
                 io.sockets.connected[usermap[username]].emit('chat message', "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " " + whisperMessage);
                 socket.emit('chat message', "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " " + whisperMessage);
             }
 
         }else{
             //Send alert if selected username is wrong
-            console.log("the selected user doesn't exist please check the username of your friend!");
             socket.emit('alert', "the selected user doesn't exist please check the username of your friend!");
         }
     });
 
+
     socket.on('sendFile', function(base64) {
+        //send file to selected user and sender
         if(fileWhisperID === usermap[socket.username] && fileWhispername !== null){
             console.log("filewhispername != null: " + fileWhispername);
             if (base64.includes("image")) {
@@ -133,9 +137,7 @@ io.on('connection', function (socket) {
             }
             fileWhispername = null;
             fileWhisperID = null;
-            console.log("FileWhispername = null " + fileWhispername);
-            console.log("FileWhisperID = null " + fileWhispername);
-
+          //send file to all users
         } else{
             if (base64.includes("image")) {
                 io.emit('img', date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
@@ -153,29 +155,26 @@ io.on('connection', function (socket) {
 
     });
 
-    //if User close the Tab or the Browser
+    //if User close the Tab or the Browser User disconnect
     socket.on('disconnect', function () {
         //tell every other users someone left the chat
-        socket.broadcast.emit('chat message', ' ' + socket.username + ' left');
+        if(socket.name === undefined){
+            socket.broadcast.emit('chat message', ' ' + socket.username + ' left');
+        }
 
-        console.log('before length: ' + userlist.length);
         for (var i = 0; i < userlist.length; i++) {
             if (userlist[i] === socket.username) {
-                console.log(userlist[i] + ' gelöscht...');
                 userlist.splice(i, 1);
-                console.log('after length: ' + userlist.length);
             }
         }
-        --userCount;
-        console.log(socket.username + ' disconnected');
-        userlist.forEach((user) => {
-            console.log(user);
-        });
+        if(userCount > 0){
+            --userCount;
+            console.log(socket.username + ' disconnected');
+        }
     });
 
     //output Messages
     socket.on('chat message',  function (msg) {
-        console.log(date(new Date(), "HH:MM") + ' ' + socket.username + ' ' + msg);
         io.emit('chat message', date(new Date(), "HH:MM") + " " + socket.username + " " + msg);
     });
 });
