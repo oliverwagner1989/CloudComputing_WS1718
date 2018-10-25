@@ -118,7 +118,6 @@ io.on('connection', function (socket) {
     socket.on('sendFile', function(base64) {
         //send file to selected user and sender
         if(fileWhisperID === usermap[socket.username] && fileWhispername !== null){
-            console.log("filewhispername != null: " + fileWhispername);
             if (base64.includes("image")) {
                 io.sockets.connected[usermap[fileWhispername]].emit('img', "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
                 socket.emit('img',  "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
