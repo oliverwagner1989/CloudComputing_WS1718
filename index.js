@@ -13,7 +13,9 @@ Reutlingen University; Cloud Computing Ex1 WS2018/19
 var express = require('express');
 var app = express();
 var fs = require('fs');
-var https = require('https');
+var server = require('http').Server(app);
+
+/*
 var server = https.createServer({
     key: fs.readFileSync('server.key'),
     cert: fs.readFileSync('server.cert'),
@@ -35,7 +37,9 @@ Reutlingen University; Cloud Computing Ex1 WS2018/19
 `));
 
 server.listen(3001);
-var io = require('socket.io').listen(server);
+*/
+server.listen(3000);
+var io = require('socket.io')(server);
 var date = require('dateformat');
 var userCount = 0;
 var userlist = [];
