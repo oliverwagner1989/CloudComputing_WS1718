@@ -38,7 +38,8 @@ Reutlingen University; Cloud Computing Ex1 WS2018/19
 
 server.listen(3001);
 */
-server.listen(3000);
+app.enable('trust proxy');
+server.listen(8080);
 var io = require('socket.io')(server);
 var date = require('dateformat');
 var userCount = 0;
