@@ -46,42 +46,4 @@ io.sockets.on('connection', function(socket){
 				else {io.sockets.emit('prompt', 'Wrong username or password.'); };
 		}); 
 	});
-	
-/*     // Socket has connected, increase socket count
-    socketCount++
-    // Let all sockets know how many are connected
-    io.sockets.emit('users connected', socketCount)
-
-    socket.on('disconnect', function() {
-        // Decrease the socket count on a disconnect, emit
-        socketCount--
-        io.sockets.emit('users connected', socketCount)
-    })
-
-    socket.on('new user', function(data){
-        // New user added, push to all sockets and insert into db
-        users.push(data)
-        io.sockets.emit('new user', data)
-        // Use node's db injection format to filter incoming data
-        db.query('INSERT INTO Users (userid, username) VALUES (?)', data.user)
-    })
-
-    // Check to see if initial query/notes are set
-    if (! isInitUsers) {
-        // Initial app start, run db query
-        db.query('SELECT * FROM Users')
-            .on('result', function(data){
-                // Push results onto the notes array
-                users.push(data)
-            })
-            .on('end', function(){
-                // Only emit notes after query has been completed
-                socket.emit('initial users', users)
-            })
-
-        isInitUsers = true
-    } else {
-        // Initial notes already exist, send out
-        socket.emit('initial users', users)
-    } */
 })
