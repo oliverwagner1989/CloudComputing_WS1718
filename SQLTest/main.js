@@ -9,6 +9,6 @@ $(document).ready(function(){
 		var password = $('#password').val();
 		console.log(username);
 		console.log(password);
-        socket.emit('new user', {username, password})
+        socket.emit('new user', {user: {username, password}})
     })
 })

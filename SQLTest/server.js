@@ -22,9 +22,11 @@ var socketCount = 0
 
 io.sockets.on('connection', function(socket){
 	socket.on('new user', function(data) {
-		console.log(data);
-		//io.sockets.emit('new user', data)
-		db.query('INSERT INTO Users (username, password) VALUES (?)', data)
+		console.log(data.user);
+		io.sockets.emit('new user', data)
+		var query = db.query('INSERT INTO Users SET ?', data.user)
+		var query2= db.query('UPDATE Users SET password = SHA(?) WHERE username=?', [data.user.password, data.user.username]);
+		console.log(query2.sql);
 	}
 	);
 	
