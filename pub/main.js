@@ -82,6 +82,8 @@ $(function () {
          //empty messages cannot be send
         } else if ($('#m').val().trim()!='') {
             socket.emit('chat message', $('#m').val());
+			getTone();
+			
         } else {
             alert("input error");
         }
@@ -139,6 +141,33 @@ $(function () {
         });
     }
 });
+
+    function getTone() {
+        fetch("/tone", {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'mode': 'cors'
+            },
+            body: JSON.stringify({
+               texts: [document.getElementById("m").value]
+            })
+        })
+        .then((response) => {
+            var contentType = response.headers.get("content-type");
+            if(contentType && contentType.includes("application/json")) {
+               return response.json();
+            }
+            throw new TypeError("Oops, we haven't got JSON!");
+        })
+        .then((response) => { 
+            console.log("response:" +  JSON.stringify(response));
+            if (response.mood) {
+              socket.emit('I am '+response.mood);
+            }
+        })
+    }
 
 /*function preventDropButtonDefaultBehaviour() {
     $("html").on("dragover", function(event) {
