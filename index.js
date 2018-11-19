@@ -13,8 +13,20 @@ Reutlingen University; Cloud Computing Ex1 WS2018/19
 var express = require('express');
 var app = express();
 var fs = require('fs');
+var mysql = require('mysql');
 var server = require('http').Server(app);
-
+//Define our db connection
+var db = mysql.createConnection({
+    host: 'cloudws1819.c0lwjxnry6gy.us-east-2.rds.amazonaws.com',
+    port: '3306',
+    user: 'root',
+    password: 'OliHanna!',
+    database: 'test'
+});
+// Log any errors connected to the db
+db.connect(function(err){
+    if (err) console.log(err);
+});
 /*
 var server = https.createServer({
     key: fs.readFileSync('server.key'),
@@ -125,39 +137,49 @@ app.post('/tone', (req, res, next) => {
 });
 
 io.on('connection', function (socket) {
-    //checks if user already exists and add them if not
-    socket.on('add user', function (username) {
-        var check = false;
-        userlist.forEach(name =>{
-            if(name === username){
-                check = true;
-            }
-        });
-        if (!check) {
-            //store username in session for this client
-            socket.username = username;
-            //add username as key, id as value  to the map
-            usermap[socket.username] = socket.id;
-            userlist.push(username);
-            ++userCount;
-
-            console.log(username + ' connected');
-
-            //welcome message
-            socket.emit('chat message', date(new Date(), "HH:MM") + ' ' + username + ' -- Nice to meet you! -');
-            //hide login and show text input and textfield
-            socket.emit('enter chatroom');
-
-            //tell every other users someone joined the chat
-            socket.broadcast.emit('user joined', {
-                username: socket.username,
-                userCount: userCount
+    //takes inputs from the frontend, checks if username is already in db and eventually stores new user into db with hashed pwd
+    socket.on('add user', function (data) {
+        db.query('SELECT COUNT (*) as count FROM Users WHERE username=?', data.user.username,
+            function (error, results, fields) {
+                if (results[0].count > 0) { //if query result >0 username is already in DB
+                    socket.emit('prompt', 'Username is already taken. Please choose a different one');
+                }
+                else {
+                    db.query('INSERT INTO Users SET ?', data.user);
+                    db.query('UPDATE Users SET password = SHA2(?,256) WHERE username=?', [data.user.password, data.user.username]);
+                    socket.emit('prompt', 'New user registered. You can login now with your chosen credentials');
+                    //store username in session for this client
+                    socket.username = data.user.username;
+                    //add username as key, id as value  to the map
+                    userlist.push(data.user.username);
+                    ++userCount;
+                }
             });
-        } else {
-            socket.emit('alert', "Username already exist. Choose another funky name!");
-        }
-
     });
+
+    socket.on('login', function (data) {
+        db.query('SELECT COUNT (*) as count FROM Users WHERE username=? && password = SHA2(?,256)', [data.user.username, data.user.password],
+            function (error, results, fields) {
+                if (results[0].count>0) { //if query result >0 user credentials are valid
+                    socket.emit('loggedIn', {username:data.user.username});
+                    //welcome message
+                    socket.emit('chat message', date(new Date(), "HH:MM") + ' ' + data.user.username + ' -- Nice to meet you! -');
+                    //hide login and show text input and textfield
+                    socket.emit('enter chatroom');
+
+                    //tell every other users someone joined the chat
+                    socket.broadcast.emit('user joined', {
+                        username: socket.username,
+                        userCount: userCount
+                    });
+                }
+
+                else {io.sockets.emit('prompt', 'Wrong username or password.');}
+            });
+    });
+
+
+
 
     //sending the list of online users to the client
     socket.on('list', function (list) {

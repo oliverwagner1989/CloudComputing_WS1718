@@ -1,0 +1,37 @@
+﻿Based on your results of IBM Cloud workshop, design and implement the following new features enhancing your application.
+
+O-1.     In order to protect your server enhance your registration dialog with a password field. The user credentials should be stored persistently and securely in a Cloud SQL database. During the login process, the provided credentials should be validated against the data stored in the database.
+
+H-2.     Additionally, add an upload button to the registration dialog to let users provide a profile picture. Use the Cloud “Visual Recognition” service to ensure that the picture contains a human face.
+
+O-3.     Ensure data confidentiality and integrity by using TLS channels between client and server only.
+
+4.     Having deployed and tested your enhanced chat server, run a dynamic “Application Security on Cloud” test on your application and put the results in your presentation.
+Note: these tests might take several hours to complete - make sure that you meet the deadline.
+
+a.     You have to add a new job to your delivery stage of the DevOps pipeline.
+
+b.     Open your delivery stage, then select “configure” for your “cf push” stage.
+
+c.     You should find an “add job” button. Click on it.
+
+d.     Select “Test” and then “IBM AppScan Dynamic Analyzer”.
+
+e.     Hit “Save”
+
+If that does not work, you might want to give the “IBM Security Static Analyzer” a try. Please write a note to Relax in case of trouble!
+
+5.     Fix at least three identified issue from step 4.
+
+ 
+
+Submission:
+·      Implement your solution and prepare a demonstration of your solution
+
+·      Prepare an English presentation about your implantation that includes at least one lesson-learnt item about node.js programming in your document. This can be of any domain, e.g., architecture, coding, or behavioral.
+
+·      Upload documentation and source code (as one zip file) to RELAX until December 1st. All uploaded files have to contain the name and student ID of all members of your group!
+
+Do not include any node-modules in your source code but rather define dependencies in package.json!
+Note that any attempt of cheating, i.e., copying, will result in zero points in the hands-on part of the lecture.
+

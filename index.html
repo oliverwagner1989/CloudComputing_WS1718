@@ -61,18 +61,21 @@ Reutlingen University; Cloud Computing Ex1 WS2018/19
 
 <body>
 <!--LOGIN-->
-<div class="container">
+<div class="container" id="frontpage">
     <div class="row login">
         <div class="col-xs-12">
-            <form id="login">
-                <h1 class="display-1">Lab<font color="#708090">Chat</h1>
+            <!--<form id="login">-->
+                <h1 class="display-1">Lab<font color="#708090">Chat</font></h1>
                 <div class="form-group">
                     <input type="text" class="form-control" id="username" placeholder="Enter Username"
                            autocomplete="off"
                            autofocus>
+                    <input type="password" class="form-control" id="password" placeholder="Password" autocomplete="off">
                     <small id="userhelp" class="form-text text-muted">Choose something funky!</small>
+                    <button class="btn btn-warning" id="register">New User</button>
+                    <button class="btn btn-success" id="login">Login</button>
                 </div>
-            </form>
+            <!--</form>-->
         </div>
     </div>
 </div>
@@ -87,7 +90,7 @@ Reutlingen University; Cloud Computing Ex1 WS2018/19
 </div>
 
 <!-- CHAT FRONTEND -->
-<div class="container">
+<div class="container" id="chatElements">
     <div class="row">
         <!--MESSAGE BOX-->
         <div id="messageBox" class="col-sm-12">

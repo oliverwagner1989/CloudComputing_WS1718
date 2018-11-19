@@ -19,40 +19,45 @@ $(function () {
     //preventDropButtonDefaultBehaviour();
 
     //hiding the chat elements on login
-    $("#messageBox").hide();
-    $("#send").hide();
+    $("#chatElements").hide();
     $("#onlineusers").hide();
 
+    //general function for calling prompts
+    socket.on('prompt', function (data) {
+        alert(data);
+    });
 
-    $("#login").submit(function () {
-        var username = $("#username").val().trim(); //removing blank spaces at the end of username input
+    $("#register").click(function() {
+        console.log(1);
+        var username = $('#username').val().trim();
+        var password = $('#password').val().trim();
+        if (username!='' && password!='') {
+            socket.emit('add user', {user: {username, password}})
+        } else {
+            alert('Please fill out all fields');
+        }
+    });
 
-
-        if(username.length > 0){ //in case entered username is not empty, username will be sent to server
-            socket.emit('add user', username);
-
-            socket.on('user joined', function(data){ //displaying message that the user has joined the chat
+    $("#login").click(function () {
+        var username = $("#username").val().trim();
+        var password = $("#password").val().trim(); //removing blank spaces at the end of username and password inputs
+        socket.emit('login', {user: {username, password}});
+        socket.on('user joined', function(data){ //displaying message that the user has joined the chat
                 $('#messages').hide().append($('<li class="list-group-item">').text(data.username + ' joined')).fadeIn(300);
             });
-
-            socket.on('enter chatroom', function () {
-                $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
-
-                //hiding the login elements after sucessful login and show the chat elements
-                $("#login").hide("slow");
-                $("#messageBox").show("slow");
-                $("#send").show("slow");
-
-                //changeButtonOnDragover();
-                updateOnlineUser();
-                $("#onlineusers").show("slow"); //showing the navbar displaying the active user
-                $('#m').focus();
-            });
-        }else{
-            //in case entered username is empty
-            alert("Please enter a Username!");
-        }
         return false;
+    });
+
+    socket.on('enter chatroom', function () {
+        $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
+        //hiding the login elements after sucessful login and show the chat elements
+        $("#frontpage").hide("slow");
+        $("#chatElements").show("slow");
+
+        //changeButtonOnDragover();
+        updateOnlineUser();
+        $("#onlineusers").show("slow"); //showing the navbar displaying the active user
+        $('#m').focus();
     });
 
     //File transfer
