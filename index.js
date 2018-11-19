@@ -21,7 +21,7 @@ var db = mysql.createConnection({
     port: '3306',
     user: 'root',
     password: 'OliHanna!',
-    database: 'test'
+    database: 'chatserver'
 });
 // Log any errors connected to the db
 db.connect(function(err){
@@ -149,9 +149,9 @@ io.on('connection', function (socket) {
                     db.query('UPDATE Users SET password = SHA2(?,256) WHERE username=?', [data.user.password, data.user.username]);
                     socket.emit('prompt', 'New user registered. You can login now with your chosen credentials');
                     //store username in session for this client
-                    socket.username = data.user.username;
+                    socket.username = data.user.displayname;
                     //add username as key, id as value  to the map
-                    userlist.push(data.user.username);
+                    userlist.push(data.user.displayname);
                     ++userCount;
                 }
             });
@@ -163,7 +163,7 @@ io.on('connection', function (socket) {
                 if (results[0].count>0) { //if query result >0 user credentials are valid
                     socket.emit('loggedIn', {username:data.user.username});
                     //welcome message
-                    socket.emit('chat message', date(new Date(), "HH:MM") + ' ' + data.user.username + ' -- Nice to meet you! -');
+                    socket.emit('chat message', date(new Date(), "HH:MM") + ' ' + socket.username + ' -- Nice to meet you! -');
                     //hide login and show text input and textfield
                     socket.emit('enter chatroom');
 

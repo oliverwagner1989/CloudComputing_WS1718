@@ -29,17 +29,18 @@ $(function () {
 
     $("#register").click(function() {
         console.log(1);
-        var username = $('#username').val().trim();
+        var username = $('#username').val().trim().toLowerCase();
+        var displayname = $('#username').val().trim();
         var password = $('#password').val().trim();
         if (username!='' && password!='') {
-            socket.emit('add user', {user: {username, password}})
+            socket.emit('add user', {user: {username, displayname, password}});
         } else {
             alert('Please fill out all fields');
         }
     });
 
     $("#login").click(function () {
-        var username = $("#username").val().trim();
+        var username = $("#username").val().trim().toLowerCase();
         var password = $("#password").val().trim(); //removing blank spaces at the end of username and password inputs
         socket.emit('login', {user: {username, password}});
         socket.on('user joined', function(data){ //displaying message that the user has joined the chat
