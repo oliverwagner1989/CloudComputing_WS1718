@@ -13,8 +13,8 @@ $(document).ready(function(){
 	
     // Add a new user
     $('#send').click(function(){
-        var username = $('#username').val();
-		var password = $('#password').val();
+        var username = $('#username').val().trim();
+		var password = $('#password').val().trim();
 		if (username!='' && password!='') {
         socket.emit('new user', {user: {username, password}})
 		} else {

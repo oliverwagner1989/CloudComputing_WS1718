@@ -30,7 +30,7 @@ io.sockets.on('connection', function(socket){
 			io.sockets.emit('prompt', 'Username is already taken. Please choose a different one');}
 				else {
 					var queryRegister = db.query('INSERT INTO Users SET ?', data.user)
-					var queryHashPassword= db.query('UPDATE Users SET password = SHA(?) WHERE username=?', [data.user.password, data.user.username]);
+					var queryHashPassword= db.query('UPDATE Users SET password = SHA2(?,256) WHERE username=?', [data.user.password, data.user.username]);
 					io.sockets.emit('prompt', 'New user registered. You can login now with your chosen credentials');
 				};
 		}); 
@@ -39,7 +39,7 @@ io.sockets.on('connection', function(socket){
 	});
 	
 	socket.on('login', function(data) {
-		var queryLogin = db.query('SELECT COUNT (*) as count FROM Users WHERE username=? && password = SHA(?)', [data.user.username, data.user.password],
+		var queryLogin = db.query('SELECT COUNT (*) as count FROM Users WHERE username=? && password = SHA2(?,256)', [data.user.username, data.user.password],
 		function (error, results, fields) {
 			if (results[0].count>0) { //if query result >0 user credentials are valid
 			io.sockets.emit('loggedIn', {username:data.user.username});}
