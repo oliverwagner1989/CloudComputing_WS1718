@@ -15,7 +15,7 @@ var app = express();
 var fs = require('fs');
 var mysql = require('mysql');
 var server = require('http').Server(app);
-//Define our db connection
+//Connecting to our db
 var db = mysql.createConnection({
     host: 'cloudws1819.c0lwjxnry6gy.us-east-2.rds.amazonaws.com',
     port: '3306',
@@ -145,13 +145,13 @@ io.on('connection', function (socket) {
                     socket.emit('prompt', 'Username is already taken. Please choose a different one');
                 }
                 else {
-                    db.query('INSERT INTO Users SET ?', data.user);
+                    db.query('INSERT INTO Users SET username = ?, password = ?', [data.user.username, data.user.password]);
                     db.query('UPDATE Users SET password = SHA2(?,256) WHERE username=?', [data.user.password, data.user.username]);
                     socket.emit('prompt', 'New user registered. You can login now with your chosen credentials');
                     //store username in session for this client
-                    socket.username = data.user.displayname;
+                    socket.username = data.user.username;
                     //add username as key, id as value  to the map
-                    userlist.push(data.user.displayname);
+                    userlist.push(data.user.username);
                     ++userCount;
                 }
             });

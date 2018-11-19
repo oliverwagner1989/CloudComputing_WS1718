@@ -29,11 +29,10 @@ $(function () {
 
     $("#register").click(function() {
         console.log(1);
-        var username = $('#username').val().trim().toLowerCase();
-        var displayname = $('#username').val().trim();
+        var username = $('#username').val().trim();
         var password = $('#password').val().trim();
         if (username!='' && password!='') {
-            socket.emit('add user', {user: {username, displayname, password}});
+            socket.emit('add user', {user: {username, password}});
         } else {
             alert('Please fill out all fields');
         }
@@ -174,37 +173,3 @@ $(function () {
             }
         })
     }
-
-/*function preventDropButtonDefaultBehaviour() {
-    $("html").on("dragover", function(event) {
-        event.preventDefault();
-        event.stopPropagation();
-        $(this).addClass('dragging');
-    });
-
-    $("html").on("dragleave", function(event) {
-        event.preventDefault();
-        event.stopPropagation();
-        $(this).removeClass('dragging');
-    });
-
-    $("html").on("drop", function(event) {
-        event.preventDefault();
-        event.stopPropagation();
-    });
-}*/
-
-/*
-function changeButtonOnDragover() {
-    $('#upload_btn').on('dragover', function () {
-        $('#upload_btn').removeClass("btn btn-warning");
-        $('#upload_btn').addClass("btn btn-danger btn-lg");
-        $('#upload_btn_icon').html("<br/><font face='verdana'> Drop your file here!</font>");
-    });
-    $('#upload_btn').on('dragleave drop', function () {
-        $('#upload_btn').removeClass("btn btn-danger btn-lg");
-        $('#upload_btn').addClass("btn btn-warning");
-        $('#upload_btn_icon').html("");
-    });
-
-}*/
