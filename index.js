@@ -60,8 +60,6 @@ var usermap = {}; //Hashmap safes socket.id for whisper mode
 var fileWhispername;
 var fileWhisperID;
 
-app.use(bodyParser.json());
-
 app.use(express.static('pub'));
 
 app.get('/', function (req, res) {
@@ -80,35 +78,40 @@ io.on('connection', function (socket) {
                     db.query('INSERT INTO Users SET username = ?, password = ?', [data.user.username, data.user.password]);
                     db.query('UPDATE Users SET password = SHA2(?,256) WHERE username=?', [data.user.password, data.user.username]);
                     socket.emit('prompt', 'New user registered. You can login now with your chosen credentials');
-                    //store username in session for this client
-                    socket.username = data.user.username;
-                    //add username as key, id as value  to the map
-                    userlist.push(data.user.username);
-                    ++userCount;
                 }
             });
     });
 
     socket.on('login', function (data) {
+    if (userlist.includes(data.user.username)) {
+        console.log('Online users: '+userlist);
+        socket.emit('prompt', 'You are already logged in!');
+    } else {
         db.query('SELECT COUNT (*) as count FROM Users WHERE username=? && password = SHA2(?,256)', [data.user.username, data.user.password],
             function (error, results, fields) {
                 if (results[0].count>0) { //if query result >0 user credentials are valid
-                    socket.emit('loggedIn', {username:data.user.username});
-                    //welcome message
-                    socket.emit('chat message', date(new Date(), "HH:MM") + ' ' + socket.username + ' -- Nice to meet you! -');
-                    //hide login and show text input and textfield
-                    socket.emit('enter chatroom');
+                    db.query('SELECT username AS user FROM Users WHERE username=?', data.user.username, function(error,results,fields) {
+                        //store username in session for this client
+                        socket.username = results[0].user;
+                        //add username as key, id as value  to the map
+                        userlist.push(results[0].user);
+                        console.log('Online users: '+userlist);
+                        ++userCount;
+                        //welcome message
+                        socket.emit('chat message', date(new Date(), "HH:MM") + ' ' + socket.username + ' -- Nice to meet you! -');
+                        //hide login and show text input and textfield
+                        socket.emit('enter chatroom');
 
-                    //tell every other users someone joined the chat
-                    socket.broadcast.emit('user joined', {
-                        username: socket.username,
-                        userCount: userCount
+                        //tell every other users someone joined the chat
+                        socket.broadcast.emit('user joined', {
+                            username: socket.username,
+                            userCount: userCount
+                        });
                     });
                 }
-
-                else {io.sockets.emit('prompt', 'Wrong username or password.');}
+                else {socket.emit('prompt', 'Wrong username or password.');}
             });
-    });
+    }});
 
 
 
