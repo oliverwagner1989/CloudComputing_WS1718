@@ -26,29 +26,7 @@ var db = mysql.createConnection({
 db.connect(function(err){
     if (err) console.log(err);
 });
-/*
-var server = https.createServer({
-    key: fs.readFileSync('server.key'),
-    cert: fs.readFileSync('server.cert'),
-    requestCert: false,
-    rejectUnauthorized: false
-}, app, console.log(`
- _           _     _____ _           _
-| |         | |   /  __ \\ |         | |
-| |     __ _| |__ | /  \\/ |__   __ _| |_
-| |    / _\` | '_ \\| |   | '_ \\ / _\` | __|
-| |___| (_| | |_) | \\__/\\ | | | (_| | |_
-\\_____/\\__,_|_.__/ \\____/_| |_|\\__,_|\\__|
 
-S S L / T L S    L I S T E N I N G    O N   P O R T    3 0 0 1
-https://localhost:3001
-
-Hanna Schulze, Oliver Wagner // 2018
-Reutlingen University; Cloud Computing Ex1 WS2018/19
-`));
-
-server.listen(3001);
-*/
 //Enforcing HTTPS on Bluemix
 app.enable('trust proxy');
 app.use (function (req, res, next) {
@@ -65,7 +43,7 @@ var io = require('socket.io')(server);
 var date = require('dateformat');
 var userCount = 0;
 var userlist = [];
-var usermap = {}; //Hashmap safes socket.id for whisper mode
+var usermap = new Map(); //Hashmap safes socket.id for whisper mode
 var fileWhispername;
 var fileWhisperID;
 
@@ -92,39 +70,39 @@ io.on('connection', function (socket) {
     });
 
     socket.on('login', function (data) {
-    if (userlist.includes(data.user.username)) {
-        console.log('Online users: '+userlist);
-        socket.emit('prompt', 'You are already logged in!');
-    } else {
         db.query('SELECT COUNT (*) as count FROM Users WHERE username=? && password = SHA2(?,256)', [data.user.username, data.user.password],
             function (error, results, fields) {
                 if (results[0].count>0) { //if query result >0 user credentials are valid
-                    db.query('SELECT username AS user FROM Users WHERE username=?', data.user.username, function(error,results,fields) {
-                        console.log('Online users: '+userlist);
-                        //store username in session for this client
-                        socket.username = results[0].user;
-                        //add username as key, id as value  to the map
-                        userlist.push(socket.username);
-                        ++userCount;
-                        console.log('Online users: '+userlist);
-                        //welcome message
-                        socket.emit('chat message', date(new Date(), "HH:MM") + ' ' + socket.username + ' -- Nice to meet you! -');
-                        //hide login and show text input and textfield
-                        socket.emit('enter chatroom');
+                    db.query('SELECT userid, username FROM Users WHERE username=?', data.user.username, function(error,results,fields) {
+                        if (!usermap.has(results[0].userid)) {
+                            console.log('Online users: '+userlist);
+                            //store username in session for this client
+                            socket.username = results[0].username;
+                            socket.userid = results[0].userid;
+                            //add username as key, id as value  to the map
+                            userlist.push(socket.username);
+                            usermap.set(socket.userid, socket.id);
+                            console.log(usermap);
+                            console.log(Object.keys(usermap));
+                            ++userCount;
+                            //welcome message
+                            socket.emit('chat message', date(new Date(), "HH:MM") + ' ' + socket.username + ' -- Nice to meet you! -');
+                            socket.emit('enter chatroom', socket.userid);
 
-                        //tell every other users someone joined the chat
-                        socket.broadcast.emit('user joined', {
-                            username: socket.username,
-                            userCount: userCount
-                        });
+                            //tell every other users someone joined the chat
+                            socket.broadcast.emit('user joined', {
+                                username: socket.username,
+                                userCount: userCount
+                            });
+                        } else {
+                            socket.emit('prompt', 'You are already logged in!');
+                        }
+
                     });
                 }
                 else {socket.emit('prompt', 'Wrong username or password.');}
             });
-    }});
-
-
-
+    });
 
     //sending the list of online users to the client
     socket.on('list', function (list) {
@@ -198,6 +176,8 @@ io.on('connection', function (socket) {
 
     //if User close the Tab or the Browser User disconnect
     socket.on('disconnect', function () {
+        console.log('userid: '+socket.userid);
+        usermap.delete(socket.userid);
         //tell every other users someone left the chat
         if(socket.name === undefined){
             socket.broadcast.emit('chat message', ' ' + socket.username + ' left');

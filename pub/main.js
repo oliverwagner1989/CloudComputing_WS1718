@@ -11,10 +11,8 @@ Reutlingen University; Cloud Computing Ex1 WS2018/19
 */
 
 $(function () {
-    window.onbeforeunload = function(){ //prevents closing/refreshing the chat window on accident
-        return "Are you sure you want to close the window?";
-    };
-    var socket = io();
+    var socket = io.connect();
+    var userId;
     var reader = new FileReader();
     //preventDropButtonDefaultBehaviour();
 
@@ -28,7 +26,6 @@ $(function () {
     });
 
     $("#register").click(function() {
-        console.log(1);
         var username = $('#username').val().trim();
         var password = $('#password').val().trim();
         if (username!='' && password!='') {
@@ -39,7 +36,7 @@ $(function () {
     });
 
     $("#login").click(function () {
-        var username = $("#username").val().trim().toLowerCase();
+        var username = $("#username").val().trim();
         var password = $("#password").val().trim(); //removing blank spaces at the end of username and password inputs
         socket.emit('login', {user: {username, password}});
         socket.on('user joined', function(data){ //displaying message that the user has joined the chat
@@ -48,7 +45,8 @@ $(function () {
         return false;
     });
 
-    socket.on('enter chatroom', function () {
+    socket.on('enter chatroom', function (socketUserId) {
+        userId = socketUserId; //saving the userid locally on client side
         $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
         //hiding the login elements after sucessful login and show the chat elements
         $("#frontpage").hide("slow");
