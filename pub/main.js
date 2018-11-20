@@ -145,13 +145,13 @@ $(function () {
         if ($('#bgtoggle').attr("aria-pressed")==="true") {
             $('body').toggleClass('bg-primary', true);
             $('body').toggleClass('bg-light', false);
-            $('#navbar').toggleClass('bg-primary', false);
-            $('#navbar').toggleClass('bg-light', true);
+            $('#navbar').toggleClass('bg-primary text-white', false);
+            $('#navbar').toggleClass('bg-light text-black', true);
         } else {
             $('body').toggleClass('bg-primary', false);
             $('body').toggleClass('bg-light', true);
-            $('#navbar').toggleClass('bg-primary', true);
-            $('#navbar').toggleClass('bg-light', false);
+            $('#navbar').toggleClass('bg-primary text-white', true);
+            $('#navbar').toggleClass('bg-light text-black', false);
         }
     });
 });
