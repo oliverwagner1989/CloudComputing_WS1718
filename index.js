@@ -12,7 +12,6 @@ Reutlingen University; Cloud Computing Ex1 WS2018/19
 
 var express = require('express');
 var app = express();
-var fs = require('fs');
 var mysql = require('mysql');
 var server = require('http').Server(app);
 //Connecting to our db
@@ -50,7 +49,17 @@ Reutlingen University; Cloud Computing Ex1 WS2018/19
 
 server.listen(3001);
 */
+//Enforcing HTTPS on Bluemix
 app.enable('trust proxy');
+app.use (function (req, res, next) {
+    if (req.secure || process.env.BLUEMIX_REGION === undefined) {
+        next();
+    } else {
+        console.log('redirecting to https');
+        res.redirect('https://' + req.headers.host + req.url);
+    }
+});
+
 server.listen(8080);
 var io = require('socket.io')(server);
 var date = require('dateformat');
@@ -91,12 +100,13 @@ io.on('connection', function (socket) {
             function (error, results, fields) {
                 if (results[0].count>0) { //if query result >0 user credentials are valid
                     db.query('SELECT username AS user FROM Users WHERE username=?', data.user.username, function(error,results,fields) {
+                        console.log('Online users: '+userlist);
                         //store username in session for this client
                         socket.username = results[0].user;
                         //add username as key, id as value  to the map
-                        userlist.push(results[0].user);
-                        console.log('Online users: '+userlist);
+                        userlist.push(socket.username);
                         ++userCount;
+                        console.log('Online users: '+userlist);
                         //welcome message
                         socket.emit('chat message', date(new Date(), "HH:MM") + ' ' + socket.username + ' -- Nice to meet you! -');
                         //hide login and show text input and textfield
