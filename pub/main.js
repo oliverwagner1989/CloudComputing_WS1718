@@ -51,8 +51,6 @@ $(function () {
         //hiding the login elements after sucessful login and show the chat elements
         $("#frontpage").hide("slow");
         $("#chatElements").show("slow");
-
-        //changeButtonOnDragover();
         updateOnlineUser();
         $("#onlineusers").show("slow"); //showing the navbar displaying the active user
         $('#m').focus();
@@ -142,4 +140,18 @@ $(function () {
             updateOnlineUser();
         });
     }
+
+    $('#bgtoggle').on('click', function() {
+        if ($('#bgtoggle').attr("aria-pressed")==="true") {
+            $('body').toggleClass('bg-primary', true);
+            $('body').toggleClass('bg-light', false);
+            $('#navbar').toggleClass('bg-primary', false);
+            $('#navbar').toggleClass('bg-light', true);
+        } else {
+            $('body').toggleClass('bg-primary', false);
+            $('body').toggleClass('bg-light', true);
+            $('#navbar').toggleClass('bg-primary', true);
+            $('#navbar').toggleClass('bg-light', false);
+        }
+    });
 });
