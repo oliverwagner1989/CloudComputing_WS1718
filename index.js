@@ -117,8 +117,6 @@ io.on('connection', function (socket) {
         var username = splicedUsername[0];
         var whisperMessage = res[1].slice(username.length, res[1].length);
         //check if receiver exists
-        console.log(usermap.get('Oli'));
-        console.log(usermap.get(username));
         if (usermap.get(username)!==undefined) {
             if(whisperMessage === " \\file"){
                 //Save receiver for sending whisper file
