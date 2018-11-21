@@ -74,16 +74,16 @@ io.on('connection', function (socket) {
             function (error, results, fields) {
                 if (results[0].count>0) { //if query result >0 user credentials are valid
                     db.query('SELECT userid, username FROM Users WHERE username=?', data.user.username, function(error,results,fields) {
-                        if (!usermap.has(results[0].userid)) {
+                        var queryResultUsername =results[0].username;
+                        var queryResultUserId = results[0].userid;
+                        if (usermap.get(queryResultUsername)===undefined) {
                             console.log('Online users: '+userlist);
                             //store username in session for this client
-                            socket.username = results[0].username;
-                            socket.userid = results[0].userid;
+                            socket.username = queryResultUsername;
+                            socket.userid = queryResultUserId;
                             //add username as key, id as value  to the map
                             userlist.push(socket.username);
-                            usermap.set(socket.userid, socket.id);
-                            console.log(usermap);
-                            console.log(Object.keys(usermap));
+                            usermap.set(socket.username, socket.id);
                             ++userCount;
                             //welcome message
                             socket.emit('chat message', date(new Date(), "HH:MM") + ' ' + socket.username + ' -- Nice to meet you! -');
@@ -113,45 +113,49 @@ io.on('connection', function (socket) {
     socket.on('whisper', function (message) {
         //split @, username and message from each other
         var res = message.split("@");
-        var username = res[1].split(" ", 1);
-        var whisperMessage = res[1].slice(username[0].length, res[1].length);
+        var splicedUsername = res[1].split(" ", 1);
+        var username = splicedUsername[0];
+        var whisperMessage = res[1].slice(username.length, res[1].length);
         //check if receiver exists
-        if (usermap[username]) {
+        console.log(usermap.get('Oli'));
+        console.log(usermap.get(username));
+        if (usermap.get(username)!==undefined) {
             if(whisperMessage === " \\file"){
                 //Save receiver for sending whisper file
                 fileWhispername = username;
-                fileWhisperID = usermap[socket.username];
+                //fileWhisperID = usermap[socket.username];
+                fileWhisperID = usermap.get(socket.username);
 
             }else{
                 //Send whispermessage to selected user and sender
-                io.sockets.connected[usermap[username]].emit('chat message', "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " " + whisperMessage);
+                io.sockets.connected[usermap.get(username)].emit('chat message', "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " " + whisperMessage);
                 socket.emit('chat message', "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " " + whisperMessage);
             }
 
         }else{
             //Send alert if selected username is wrong
-            socket.emit('alert', "the selected user doesn't exist please check the username of your friend!");
+            socket.emit('prompt', "the selected user doesn't exist please check the username of your friend!");
         }
     });
 
 
     socket.on('sendFile', function(base64) {
         //send file to selected user and sender
-        if(fileWhisperID === usermap[socket.username] && fileWhispername !== null){
+        if(fileWhisperID === usermap.get(socket.username) && fileWhispername !== null){
             if (base64.includes("image")) {
-                io.sockets.connected[usermap[fileWhispername]].emit('img', "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
+                io.sockets.connected[usermap.get(fileWhispername)].emit('img', "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
                 socket.emit('img',  "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
             }
             else if (base64.includes("audio")) {
-                io.sockets.connected[usermap[fileWhispername]].emit('audio',  "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
+                io.sockets.connected[usermap.get(fileWhispername)].emit('audio',  "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
                 socket.emit('audio',  "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
             }
             else if (base64.includes("video")) {
-                io.sockets.connected[usermap[fileWhispername]].emit('vid',  "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
+                io.sockets.connected[usermap.get(fileWhispername)].emit('vid',  "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
                 socket.emit('vid',  "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
             }
             else if (base64.includes("pdf")) {
-                io.sockets.connected[usermap[fileWhispername]].emit('pdf',  "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
+                io.sockets.connected[usermap.get(fileWhispername)].emit('pdf',  "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
                 socket.emit('pdf',  "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " ", base64);
             }
             fileWhispername = null;
@@ -176,8 +180,7 @@ io.on('connection', function (socket) {
 
     //if User close the Tab or the Browser User disconnect
     socket.on('disconnect', function () {
-        console.log('userid: '+socket.userid);
-        usermap.delete(socket.userid);
+        usermap.delete(socket.username);
         //tell every other users someone left the chat
         if(socket.name === undefined){
             socket.broadcast.emit('chat message', ' ' + socket.username + ' left');

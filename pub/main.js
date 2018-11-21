@@ -128,11 +128,6 @@ $(function () {
         $("#messages").animate({ scrollTop: $("#messages")[0].scrollHeight});
     });
 
-    //in case an alert is needed
-    socket.on('alert', (msg) => {
-        alert(msg);
-    });
-
     //constantly updating the list of active users
     function updateOnlineUser() {
         socket.emit('list', function (list) {
@@ -145,13 +140,17 @@ $(function () {
         if ($('#bgtoggle').attr("aria-pressed")==="true") {
             $('body').toggleClass('bg-primary', false);
             $('body').toggleClass('bg-light', true);
-            $('#navbar').toggleClass('bg-primary text-white', true);
-            $('#navbar').toggleClass('bg-light text-black', false);
+            $('#navbar').toggleClass('bg-primary text-light', true);
+            $('#navbar').toggleClass('bg-light text-primary', false);
+            $('#logo').toggleClass('text-primary', true);
+            $('#logo').toggleClass('text-light', false);
         } else {
             $('body').toggleClass('bg-primary', true);
             $('body').toggleClass('bg-light', false);
-            $('#navbar').toggleClass('bg-primary text-white', false);
-            $('#navbar').toggleClass('bg-light text-black', true);
+            $('#navbar').toggleClass('bg-primary text-light', false);
+            $('#navbar').toggleClass('bg-light text-primary', true);
+            $('#logo').toggleClass('text-light', true);
+            $('#logo').toggleClass('text-primary', false);
         }
     });
 });
