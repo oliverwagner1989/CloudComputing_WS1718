@@ -1,5 +1,5 @@
 ---
 applications:
-- name: xenodochial-raman
+- name: objective-euler
   memory: 512M
   instances: 1
