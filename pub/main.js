@@ -144,6 +144,9 @@ $(function () {
             $('#navbar').toggleClass('bg-light text-primary', false);
             $('#logo').toggleClass('text-primary', true);
             $('#logo').toggleClass('text-light', false);
+            $('#username').css("background-color", "#ffffff");
+            $('#password').css("background-color", "#ffffff");
+            $('#m').css("background-color", "#ffffff");
         } else {
             $('body').toggleClass('bg-primary', true);
             $('body').toggleClass('bg-light', false);
@@ -151,6 +154,9 @@ $(function () {
             $('#navbar').toggleClass('bg-light text-primary', true);
             $('#logo').toggleClass('text-light', true);
             $('#logo').toggleClass('text-primary', false);
+            $('#username').css("background-color", "#222222");
+            $('#password').css("background-color", "#222222");
+            $('#m').css("background-color", "#222222");
         }
     });
 });
