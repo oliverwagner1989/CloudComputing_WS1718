@@ -14,6 +14,7 @@ var express = require('express');
 var app = express();
 var mysql = require('mysql');
 var server = require('http').Server(app);
+var crypto = require('crypto');
 //Connecting to our db
 var db = mysql.createConnection({
     host: 'cloudws1819.c0lwjxnry6gy.us-east-2.rds.amazonaws.com',
@@ -62,46 +63,53 @@ io.on('connection', function (socket) {
                     socket.emit('prompt', 'Username is already taken. Please choose a different one');
                 }
                 else {
-                    db.query('INSERT INTO Users SET username = ?, password = ?', [data.user.username, data.user.password]);
-                    db.query('UPDATE Users SET password = SHA2(?,256) WHERE username=?', [data.user.password, data.user.username]);
+                    var salt = crypto.randomBytes(16).toString('base64');
+                    var saltedPassword = salt+data.user.password;
+                    db.query('INSERT INTO Users SET username = ?, password = SHA2(?,256), salt=?', [data.user.username, saltedPassword, salt]);
                     socket.emit('prompt', 'New user registered. You can login now with your chosen credentials');
                 }
             });
     });
 
     socket.on('login', function (data) {
-        db.query('SELECT COUNT (*) as count FROM Users WHERE username=? && password = SHA2(?,256)', [data.user.username, data.user.password],
-            function (error, results, fields) {
-                if (results[0].count>0) { //if query result >0 user credentials are valid
-                    db.query('SELECT userid, username FROM Users WHERE username=?', data.user.username, function(error,results,fields) {
-                        var queryResultUsername =results[0].username;
-                        var queryResultUserId = results[0].userid;
-                        if (usermap.get(queryResultUsername)===undefined) {
-                            console.log('Online users: '+userlist);
-                            //store username in session for this client
-                            socket.username = queryResultUsername;
-                            socket.userid = queryResultUserId;
-                            //add username as key, id as value  to the map
-                            userlist.push(socket.username);
-                            usermap.set(socket.username, socket.id);
-                            ++userCount;
-                            //welcome message
-                            socket.emit('chat message', date(new Date(), "HH:MM") + ' ' + socket.username + ' -- Nice to meet you! -');
-                            socket.emit('enter chatroom', socket.userid);
-
-                            //tell every other users someone joined the chat
-                            socket.broadcast.emit('user joined', {
-                                username: socket.username,
-                                userCount: userCount
-                            });
+        //db.query('SELECT COUNT (*) as count FROM Users WHERE username=? && password = SHA2(?,256)',
+        db.query('SELECT * FROM Users WHERE username=?', data.user.username, function (error, results, fields) {
+            if (results[0] !== undefined) {
+                var salt = results[0].salt;
+                var saltedPassword = salt + data.user.password;
+                var queryResultUsername = results[0].username;
+                var queryResultUserId = results[0].userid;
+                db.query('SELECT COUNT(*) AS count FROM Users WHERE username=? && password=SHA2(?,256)', [data.user.username, saltedPassword],
+                    function (error, results, fields) {
+                        if (results[0].count > 0) {
+                            if (usermap.get(queryResultUsername) === undefined) {
+                                console.log('Online users: ' + userlist);
+                                //store username in session for this client
+                                socket.username = queryResultUsername;
+                                socket.userid = queryResultUserId;
+                                //add username as key, id as value  to the map
+                                userlist.push(socket.username);
+                                usermap.set(socket.username, socket.id);
+                                ++userCount;
+                                //welcome message
+                                socket.emit('chat message', date(new Date(), "HH:MM") + ' ' + socket.username + ' -- Nice to meet you! -');
+                                socket.emit('enter chatroom', socket.userid);
+                                //tell every other users someone joined the chat
+                                socket.broadcast.emit('user joined', {
+                                    username: socket.username,
+                                    userCount: userCount
+                                });
+                            } else {
+                                socket.emit('prompt', 'You are already logged in!');
+                            }
                         } else {
-                            socket.emit('prompt', 'You are already logged in!');
+                            socket.emit('prompt', 'Wrong username or password.');
                         }
-
                     });
-                }
-                else {socket.emit('prompt', 'Wrong username or password.');}
-            });
+            } else {
+                socket.emit('prompt', 'User does not exist.');
+            }
+        });
     });
 
     //sending the list of online users to the client
