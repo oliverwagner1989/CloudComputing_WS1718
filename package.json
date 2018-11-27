@@ -13,6 +13,9 @@
     "helmet": "^3.15.0",
     "jquery": "^3.3.1",
     "mysql": "^2.16.0",
-    "socket.io": "^2.1.1"
+    "popper.js": "^1.14.5",
+    "socket.io": "^2.1.1",
+    "socket.io-stream": "^0.9.1",
+    "watson-developer-cloud": "^3.13.0"
   }
 }

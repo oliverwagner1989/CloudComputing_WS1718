@@ -28,7 +28,7 @@ $(function () {
     $("#register").click(function() {
         var username = $('#username').val().trim();
         var password = $('#password').val().trim();
-        if (username!='' && password!='') {
+        if (username!=='' && password!=='') {
             socket.emit('add user', {user: {username, password}});
         } else {
             alert('Please fill out all fields');
@@ -45,10 +45,18 @@ $(function () {
         return false;
     });
 
+
+    $("#upload_pic").on('change', function(event){
+        var file = event.target.files[0];
+        var stream = ss.createStream();
+        ss(socket).emit('save_pic', stream, {name: file.name});
+        ss.createBlobReadStream(file).pipe(stream);
+    });
+
     socket.on('enter chatroom', function (socketUserId) {
         userId = socketUserId; //saving the userid locally on client side
         $("li.active").prev().removeClass('list-group-item active').addClass('list-group-item');
-        //hiding the login elements after sucessful login and show the chat elements
+        //hiding the login elements after successful login and show the chat elements
         $("#frontpage").hide("slow");
         $("#chatElements").show("slow");
         updateOnlineUser();
@@ -63,7 +71,7 @@ $(function () {
         reader.onload = function(event) {
             socket.emit('sendFile', event.target.result);
         };
-        reader.readAsDataURL(document.querySelector('input[type=file]').files[0]);
+        reader.readAsDataURL(document.querySelector('#file-upload').files[0]);
     });
 
 

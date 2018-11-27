@@ -24,6 +24,7 @@ Reutlingen University; Cloud Computing Ex1 WS2018/19
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io-stream/0.9.1/socket.io-stream.js"></script>
     <script src="jquery_min.js"></script>
     <script src="bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/3.7.1/less.min.js" ></script>
@@ -62,8 +63,14 @@ Reutlingen University; Cloud Computing Ex1 WS2018/19
                            autofocus>
                     <input type="password" class="form-control" id="password" placeholder="Password" autocomplete="off">
                     <small id="userhelp" class="form-text text-muted">Choose something funky!</small>
+                    <div id="image_holder"> </div>
+                    <!--<label for="upload_pic" class="btn btn-warning" id="upload_btnpic">
+                        <i class="fas fa-angle-double-up fa-1x" id="upload_btn_pic"></i>
+                    </label>-->
+                    <input type="file" class = "btn btn-secondary" id="upload_pic" accept="image/jpeg, image/png">
                     <button class="btn btn-warning" id="register">New User</button>
                     <button class="btn btn-success" id="login">Login</button>
+
                 </div>
         </div>
     </div>

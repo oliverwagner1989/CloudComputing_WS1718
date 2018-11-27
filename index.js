@@ -14,6 +14,7 @@ var express = require('express');
 var app = express();
 var mysql = require('mysql');
 var helmet = require('helmet');
+var fs = require('fs');
 var server = require('http').Server(app);
 var crypto = require('crypto');
 //Connecting to our db
@@ -43,12 +44,22 @@ app.use (function (req, res, next) {
 server.listen(8080);
 var io = require('socket.io')(server);
 app.use(helmet());
+var ss =  require('socket.io-stream');
+var path = require('path');
+
 var date = require('dateformat');
 var userCount = 0;
 var userlist = [];
 var usermap = new Map(); //Hashmap safes socket.id for whisper mode
-var fileWhispername;
-var fileWhisperID;
+var VisualRecognitionV3 = require('watson-developer-cloud/visual-recognition/v3');
+
+//SDK managing the IAM token.
+//API requests require a version parameter that takes a date in format 'YYYY-MM-DD'
+var visualRecognition = new VisualRecognitionV3({
+    version: '2018-03-19',
+    iam_apikey: 'BGB6CK3kFVWqKldIrkMdPS2vRe3OhtG1Nnxwk01egHMd',
+});
+
 
 app.use(express.static('pub'));
 
@@ -61,6 +72,10 @@ app.get('/DomainVerification.html', function (req, res) {
 });
 
 io.on('connection', function (socket) {
+    var fileWhispername;
+    var fileWhisperID;
+    var filepath;
+
     //takes inputs from the frontend, checks if username is already in db and eventually stores new user into db with hashed pwd
     socket.on('add user', function (data) {
         db.query('SELECT COUNT (*) as count FROM Users WHERE username=?', data.user.username,
@@ -70,11 +85,12 @@ io.on('connection', function (socket) {
                 }
                 else {
                     var salt = crypto.randomBytes(16).toString('base64');
-                    var saltedPassword = salt+data.user.password;
-                    db.query('INSERT INTO Users SET username = ?, password = SHA2(?,256), salt=?', [data.user.username, saltedPassword, salt]);
+                    var saltedPassword = salt + data.user.password;
+                    db.query('INSERT INTO Users SET username = ?, password = SHA2(?,256), salt=?, picture = ?', [data.user.username, saltedPassword, salt, filepath]);
                     socket.emit('prompt', 'New user registered. You can login now with your chosen credentials');
                 }
-            });
+            }
+        );
     });
 
     socket.on('login', function (data) {
@@ -117,6 +133,33 @@ io.on('connection', function (socket) {
             }
         });
     });
+
+    //save selected picture on server
+    ss(socket).on('save_pic', function (stream, data) {
+        var filename = path.basename(data.name);
+        filepath = "./pictures/"+filename;
+        stream.pipe(fs.createWriteStream(filepath).on("close", function () {
+            //Visual Recognition
+            var images_file = fs.createReadStream(filepath);
+
+            var params = {
+                images_file: images_file
+            };
+
+            visualRecognition.detectFaces(params, function (err, response) {
+                if (err) {
+                    socket.emit('prompt', 'Please try again later, there must be a Problem with the IBM Face Recognition.');
+                    console.log(err);
+                } else if (response.images[0].faces.length <= 0) {
+                    socket.emit('prompt', 'The Picture must contain a human face');
+                } else {
+                    console.log('VR says: ' + JSON.stringify(response));
+                    socket.emit('prompt', 'Picture contains a human face! U are greate!');
+                }
+            });
+        }));
+    });
+
 
     //sending the list of online users to the client
     socket.on('list', function (list) {
@@ -213,4 +256,5 @@ io.on('connection', function (socket) {
     socket.on('chat message',  function (msg) {
         io.emit('chat message', date(new Date(), "HH:MM") + " " + socket.username + " " + msg);
     });
+
 });
