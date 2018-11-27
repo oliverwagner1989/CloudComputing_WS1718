@@ -13,6 +13,7 @@ Reutlingen University; Cloud Computing Ex1 WS2018/19
 var express = require('express');
 var app = express();
 var mysql = require('mysql');
+var helmet = require('helmet');
 var server = require('http').Server(app);
 var crypto = require('crypto');
 //Connecting to our db
@@ -41,6 +42,7 @@ app.use (function (req, res, next) {
 
 server.listen(8080);
 var io = require('socket.io')(server);
+app.use(helmet());
 var date = require('dateformat');
 var userCount = 0;
 var userlist = [];
@@ -52,6 +54,10 @@ app.use(express.static('pub'));
 
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
+});
+
+app.get('/DomainVerification.html', function (req, res) {
+    res.sendFile(__dirname + '/DomainVerification.html');
 });
 
 io.on('connection', function (socket) {
