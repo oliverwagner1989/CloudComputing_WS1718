@@ -46,7 +46,6 @@ var io = require('socket.io')(server);
 app.use(helmet());
 var ss =  require('socket.io-stream');
 var path = require('path');
-
 var date = require('dateformat');
 var userCount = 0;
 var userlist = [];
@@ -74,7 +73,7 @@ app.get('/DomainVerification.html', function (req, res) {
 io.on('connection', function (socket) {
     var fileWhispername;
     var fileWhisperID;
-    var filepath;
+    var filepath='';
 
     //takes inputs from the frontend, checks if username is already in db and eventually stores new user into db with hashed pwd
     socket.on('add user', function (data) {
@@ -88,6 +87,7 @@ io.on('connection', function (socket) {
                     var saltedPassword = salt + data.user.password;
                     db.query('INSERT INTO Users SET username = ?, password = SHA2(?,256), salt=?, picture = ?', [data.user.username, saltedPassword, salt, filepath]);
                     socket.emit('prompt', 'New user registered. You can login now with your chosen credentials');
+                    filepath = '';
                 }
             }
         );
@@ -134,7 +134,8 @@ io.on('connection', function (socket) {
         });
     });
 
-    //save selected picture on server
+
+    //save selected picture on server and via visualRecognition checking if it's a picture of a human face
     ss(socket).on('save_pic', function (stream, data) {
         var filename = path.basename(data.name);
         filepath = "./pictures/"+filename;
@@ -148,18 +149,21 @@ io.on('connection', function (socket) {
 
             visualRecognition.detectFaces(params, function (err, response) {
                 if (err) {
+                    filepath='';
                     socket.emit('prompt', 'Please try again later, there must be a Problem with the IBM Face Recognition.');
                     console.log(err);
                 } else if (response.images[0].faces.length <= 0) {
+                    filepath='';
                     socket.emit('prompt', 'The Picture must contain a human face');
                 } else {
                     console.log('VR says: ' + JSON.stringify(response));
-                    socket.emit('prompt', 'Picture contains a human face! U are greate!');
+                    socket.emit('prompt', 'Picture contains a human face! U look great!');
                 }
             });
-        }));
-    });
 
+        }));
+
+    });
 
     //sending the list of online users to the client
     socket.on('list', function (list) {
