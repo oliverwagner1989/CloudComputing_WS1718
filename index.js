@@ -14,6 +14,7 @@ var express = require('express');
 var app = express();
 var mysql = require('mysql');
 var helmet = require('helmet');
+app.use(helmet());
 var fs = require('fs');
 var server = require('http').Server(app);
 var crypto = require('crypto');
@@ -43,7 +44,6 @@ app.use (function (req, res, next) {
 
 server.listen(8080);
 var io = require('socket.io')(server);
-app.use(helmet());
 var ss =  require('socket.io-stream');
 var path = require('path');
 var date = require('dateformat');
