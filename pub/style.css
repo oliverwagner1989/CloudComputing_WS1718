@@ -23,6 +23,6 @@ html, body {
             border-radius: 1rem;
         }
 
-        #chatElements, #file-upload{
+        #chatElements, #file-upload, #upload_pic{
             display: none;
         }

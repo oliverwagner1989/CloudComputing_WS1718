@@ -88,6 +88,7 @@ io.on('connection', function (socket) {
                     db.query('INSERT INTO Users SET username = ?, password = SHA2(?,256), salt=?, picture = ?', [data.user.username, saltedPassword, salt, filepath]);
                     socket.emit('prompt', 'New user registered. You can login now with your chosen credentials');
                     filepath = '';
+                    console.log(filepath);
                 }
             }
         );
@@ -149,12 +150,12 @@ io.on('connection', function (socket) {
 
             visualRecognition.detectFaces(params, function (err, response) {
                 if (err) {
-                    filepath='';
                     socket.emit('prompt', 'Please try again later, there must be a Problem with the IBM Face Recognition.');
                     console.log(err);
+                    filepath.delete();
                 } else if (response.images[0].faces.length <= 0) {
-                    filepath='';
                     socket.emit('prompt', 'The Picture must contain a human face');
+                    filepath.delete();
                 } else {
                     console.log('VR says: ' + JSON.stringify(response));
                     socket.emit('prompt', 'Picture contains a human face! U look great!');
