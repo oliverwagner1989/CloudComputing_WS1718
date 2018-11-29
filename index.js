@@ -14,7 +14,38 @@ var express = require('express');
 var app = express();
 var mysql = require('mysql');
 var helmet = require('helmet');
-app.use(helmet());
+
+//helmet flags
+//app.use(helmet());
+//HSTS
+const sixtyDaysInSeconds = 5184000;
+app.use(helmet.hsts({
+    maxAge: sixtyDaysInSeconds
+}));
+//CSP
+app.use(helmet.contentSecurityPolicy({
+    directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "cdnjs.cloudflare.com", 'maxcdn.bootstrapcdn.com', 'use.fontawesome.com', 'fonts.googleapis.com', "'unsafe-inline'"],
+        fontSrc: ["use.fontawesome.com", "fonts.googleapis.com", 'fonts.gstatic.com'],
+        scriptSrc: ["'self'", "cdnjs.cloudflare.com"]
+    },
+    reportOnly: false
+}));
+//DNS Prefetch Control
+app.use(helmet.dnsPrefetchControl());
+//XSS Filter
+app.use(helmet.xssFilter());
+//IE No Open
+app.use(helmet.ieNoOpen());
+//No Sniff MIME Type
+app.use(helmet.noSniff());
+//Hide powered by
+app.use(helmet.hidePoweredBy());
+//Frameguard
+app.use(helmet.frameguard({ action: 'deny' }));
+
+
 var fs = require('fs');
 var server = require('http').Server(app);
 var crypto = require('crypto');

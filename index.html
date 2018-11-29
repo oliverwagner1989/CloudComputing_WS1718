@@ -27,13 +27,9 @@ Reutlingen University; Cloud Computing Ex1 WS2018/19
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io-stream/0.9.1/socket.io-stream.js"></script>
     <script src="jquery_min.js"></script>
     <script src="bootstrap.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/3.7.1/less.min.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/less.js/3.7.1/less.min.js" ></script>
     <script src="jquery.cssemoticons.min.js"></script>
     <script src="main.js"></script>
-
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <meta http-equiv="X-WebKit-CSP" content="default-src 'self'; script-src 'self'">
 
     <meta name="theme-color" content="#2C3E50">
 
@@ -49,9 +45,11 @@ Reutlingen University; Cloud Computing Ex1 WS2018/19
             <p id="onlineusers" align="center"></p>
         </div>
         <div class="col text-right">
+            <i class="fas fa-sun"></i>
             <button id="bgtoggle" type="button" class="btn btn-xs btn-toggle" data-toggle="button" aria-pressed="false" autocomplete="off">
                 <div class="handle"></div>
             </button>
+            <i class="fas fa-moon"></i>
         </div>
     </div>
     </div>
@@ -67,7 +65,7 @@ Reutlingen University; Cloud Computing Ex1 WS2018/19
                     <small id="userhelp" class="form-text text-muted">Choose something funky!</small>
                     <div id="img_profile"> </div>
                     <label for="upload_pic" class="btn btn-warning" id="upload_btnpic">
-                        <i class="fas fa-angle-double-up fa-1x" id="upload_btn_pic"></i>
+                    <i class="fas fa-angle-double-up fa-1x" id="upload_btn_pic"></i>
                     </label>
                     <input type="file" class = "btn btn-secondary" id="upload_pic" accept="image/jpeg, image/png">
                     <button class="btn btn-warning" id="register">New User</button>
