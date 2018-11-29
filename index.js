@@ -28,7 +28,8 @@ app.use(helmet.contentSecurityPolicy({
         defaultSrc: ["'self'"],
         styleSrc: ["'self'", "cdnjs.cloudflare.com", 'maxcdn.bootstrapcdn.com', 'use.fontawesome.com', 'fonts.googleapis.com', "'unsafe-inline'"],
         fontSrc: ["use.fontawesome.com", "fonts.googleapis.com", 'fonts.gstatic.com'],
-        scriptSrc: ["'self'", "cdnjs.cloudflare.com"]
+        scriptSrc: ["'self'", "cdnjs.cloudflare.com"],
+        connectSrc: ["'self'", 'wss://localhost:8080', 'wss://objective-euler.mybluemix.net', 'ws://localhost:8080', 'ws://objective-euler.mybluemix.net']
     },
     reportOnly: false
 }));
