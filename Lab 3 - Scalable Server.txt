@@ -1,0 +1,25 @@
+A scalable and resilient chat-server
+
+Based on your implementation of exercise 3, do the following:
+
+1.     Analyse your code and identify any issue that prevents your current implementation from being run on multiple instances (scaled-out mode). Document these issues!
+
+2.     Devise a solution to overcome the identified issues: provide suitable design documentation for your solutions.
+
+3.     Implement the solution on the IBM Cloud Platform.
+
+4.     Does your scaled-out service survive an instance failure or are any repair actions required? Find arguments that support your statement!
+
+Submission
+
+·      Implement your solution and prepare a presentation and demonstration of your solution
+
+·      Include at least one lesson-learnt item about node.js programming in your document. This can be of any domain, e.g., architecture, coding, or behavioural.
+
+·      Upload documentation and source code (as one zip file) to RELAX. All uploaded files have to contain the name and student ID of all members of your group!
+
+        Do not include any node-modules in your source code but rather define dependencies in package.json!
+
+ 
+
+Note that any attempt of cheating, i.e., copying, will result in zero points in the hands-on part of the lecture.
