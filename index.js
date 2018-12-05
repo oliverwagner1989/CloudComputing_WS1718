@@ -25,7 +25,7 @@ app.use(helmet.hsts({
 //CSP
 app.use(helmet.contentSecurityPolicy({
     directives: {
-        defaultSrc: ["'self'"],
+        defaultSrc: ["'self'", 'data:'],
         styleSrc: ["'self'", "cdnjs.cloudflare.com", 'maxcdn.bootstrapcdn.com', 'use.fontawesome.com', 'fonts.googleapis.com', "'unsafe-inline'"],
         fontSrc: ["use.fontawesome.com", "fonts.googleapis.com", 'fonts.gstatic.com'],
         scriptSrc: ["'self'", "cdnjs.cloudflare.com"],
