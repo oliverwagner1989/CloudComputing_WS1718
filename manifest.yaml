@@ -1,5 +1,6 @@
 ---
 applications:
 - name: objective-euler
+  framework: node
   memory: 512M
   instances: 1
