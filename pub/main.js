@@ -11,7 +11,11 @@ Reutlingen University; Cloud Computing Ex1 WS2018/19
 */
 
 $(function () {
-    var socket = io.connect();
+    var socket = io('https://objective-euler.mybluemix.net', {transports: ['websocket']});
+    socket.on('connect', function () {
+        console.log('connected!');
+    });
+    //var socket = io.connect();
     var userId;
     var reader = new FileReader();
     //preventDropButtonDefaultBehaviour();

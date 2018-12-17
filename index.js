@@ -9,11 +9,28 @@
 Hanna Schulze, Oliver Wagner // 2018
 Reutlingen University; Cloud Computing Ex1 WS2018/19
 */
-
 var express = require('express');
 var app = express();
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+
+var Redis = require('ioredis');
+var redisadapter=require('socket.io-redis');
 var mysql = require('mysql');
 var helmet = require('helmet');
+
+//Lokal
+/*var pub = new Redis();
+var sub = new Redis();*/
+
+//Redis4You
+var pub = new Redis("redis://cloudws1819:2264e36121a6c35db9c0d831b97626eb@85.25.11.9:3168/");
+var sub = new Redis("redis://cloudws1819:2264e36121a6c35db9c0d831b97626eb@85.25.11.9:3168/");
+
+io.adapter(redisadapter( {pubClient:pub, subClient:sub}));
+
+pub.flushdb(); //clearing the redis db
+
 
 //helmet flags
 //app.use(helmet());
@@ -48,7 +65,6 @@ app.use(helmet.frameguard({ action: 'deny' }));
 
 
 var fs = require('fs');
-var server = require('http').Server(app);
 var crypto = require('crypto');
 //Connecting to our db
 var db = mysql.createConnection({
@@ -75,11 +91,11 @@ app.use (function (req, res, next) {
 });
 
 server.listen(8080);
-var io = require('socket.io')(server);
 var ss =  require('socket.io-stream');
 var path = require('path');
 var date = require('dateformat');
 var userCount = 0;
+var users;
 var userlist = [];
 var usermap = new Map(); //Hashmap safes socket.id for whisper mode
 var VisualRecognitionV3 = require('watson-developer-cloud/visual-recognition/v3');
@@ -120,13 +136,16 @@ io.on('connection', function (socket) {
                     db.query('INSERT INTO Users SET username = ?, password = SHA2(?,256), salt=?, picture = ?', [data.user.username, saltedPassword, salt, filepath]);
                     socket.emit('prompt', 'New user registered. You can login now with your chosen credentials');
                     filepath = '';
-                    console.log(filepath);
+
                 }
             }
         );
     });
 
     socket.on('login', function (data) {
+        pub.get('bla', function (err, result) {
+            console.log(result);
+        });
         //db.query('SELECT COUNT (*) as count FROM Users WHERE username=? && password = SHA2(?,256)',
         db.query('SELECT * FROM Users WHERE username=?', data.user.username, function (error, results, fields) {
             if (results[0] !== undefined) {
@@ -138,13 +157,19 @@ io.on('connection', function (socket) {
                     function (error, results, fields) {
                         if (results[0].count > 0) {
                             if (usermap.get(queryResultUsername) === undefined) {
-                                console.log('Online users: ' + userlist);
                                 //store username in session for this client
                                 socket.username = queryResultUsername;
                                 socket.userid = queryResultUserId;
+                                pub.set(socket.username, socket.id);
+                                pub.keys('*', function (err, result) {
+                                    console.log(result.toString());
+                                    users = result.toString();
+                                });
+                                console.log("var users"+users);
+                                console.log('Online users: ' + users);
                                 //add username as key, id as value  to the map
-                                userlist.push(socket.username);
-                                usermap.set(socket.username, socket.id);
+                                //userlist.push(socket.username);
+                                //usermap.set(socket.username, socket.id);
                                 ++userCount;
                                 //welcome message
                                 socket.emit('chat message', date(new Date(), "HH:MM") + ' ' + socket.username + ' -- Nice to meet you! -');
@@ -200,7 +225,10 @@ io.on('connection', function (socket) {
 
     //sending the list of online users to the client
     socket.on('list', function (list) {
-        list(userlist);
+        pub.keys('*', function (err, result) {
+            list(result.toString());
+        });
+
     });
 
     //send messages & files only to one user
@@ -211,23 +239,15 @@ io.on('connection', function (socket) {
         var username = splicedUsername[0];
         var whisperMessage = res[1].slice(username.length, res[1].length);
         //check if receiver exists
-        if (usermap.get(username)!==undefined) {
-            if(whisperMessage === " \\file"){
-                //Save receiver for sending whisper file
-                fileWhispername = username;
-                //fileWhisperID = usermap[socket.username];
-                fileWhisperID = usermap.get(socket.username);
 
-            }else{
+        pub.get(username, function (err, result) {
+            if(whisperMessage === " \\file"){
+            } else{
                 //Send whispermessage to selected user and sender
-                io.sockets.connected[usermap.get(username)].emit('chat message', "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " " + whisperMessage);
+                io.sockets.connected[result].emit('chat message', "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " " + whisperMessage);
                 socket.emit('chat message', "----whisper  " + date(new Date(), "HH:MM") + " " + socket.username + " " + whisperMessage);
             }
-
-        }else{
-            //Send alert if selected username is wrong
-            socket.emit('prompt', "the selected user doesn't exist please check the username of your friend!");
-        }
+        });
     });
 
 
@@ -272,16 +292,11 @@ io.on('connection', function (socket) {
 
     //if User close the Tab or the Browser User disconnect
     socket.on('disconnect', function () {
-        usermap.delete(socket.username);
+        pub.del(socket.username);
+        //usermap.delete(socket.username);
         //tell every other users someone left the chat
         if(socket.name === undefined){
             socket.broadcast.emit('chat message', ' ' + socket.username + ' left');
-        }
-
-        for (var i = 0; i < userlist.length; i++) {
-            if (userlist[i] === socket.username) {
-                userlist.splice(i, 1);
-            }
         }
         if(userCount > 0){
             --userCount;
@@ -295,3 +310,4 @@ io.on('connection', function (socket) {
     });
 
 });
+
