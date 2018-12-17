@@ -1,0 +1,5 @@
+Our Issues for scalability:
+- each instance of a server has it's own usermap for saving the active users 
+   --> users from various instances can't communicate with each other
+- no implementation for fail over 
+   --> if you have run 2 instances they don't know from each other
