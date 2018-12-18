@@ -5,4 +5,4 @@ applications:
   memory: 256M
   instances: 2
   services:
-    - Compose for Redis-3c
+    - Compose for Redis-7w

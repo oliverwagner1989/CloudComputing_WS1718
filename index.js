@@ -24,8 +24,14 @@ var helmet = require('helmet');
 var sub = new Redis();*/
 
 //connect to redis instance on Redis4You
+/*
 var pub = new Redis("redis://cloudws1819:2264e36121a6c35db9c0d831b97626eb@85.25.11.9:3168/");
 var sub = new Redis("redis://cloudws1819:2264e36121a6c35db9c0d831b97626eb@85.25.11.9:3168/");
+*/
+
+//connect to redis instance on Bluemix
+var pub = new Redis("redis://admin:VPRAEQLOALDYZDWJ@sl-us-south-1-portal.45.dblayer.com:18680");
+var sub = new Redis("redis://admin:VPRAEQLOALDYZDWJ@sl-us-south-1-portal.45.dblayer.com:18680");
 
 io.adapter(redisadapter( {pubClient:pub, subClient:sub}));
 
